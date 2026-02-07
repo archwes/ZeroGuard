@@ -1,8 +1,8 @@
-# 🚀 Deploy Checklist
+# 🚀 Lista de Verificação de Implantação
 
 ## ✅ Preparação (Antes de começar)
 
-### 1. Gerar Secrets
+### 1. Gerar Segredos
 ```powershell
 # Windows
 .\scripts\generate-secrets.ps1
@@ -11,37 +11,37 @@
 bash scripts/generate-secrets.sh
 ```
 
-**Salve as secrets geradas em um gerenciador de senhas!**
+**Salve os segredos gerados em um gerenciador de senhas!**
 
 ### 2. Escolher Plataformas
 
-#### Backend (escolha uma):
+#### Servidor (escolha uma):
 - [ ] **Render** - Fácil, $7/mês (recomendado)
-- [ ] **Railway** - Bom DX, $5-20/mês
+- [ ] **Railway** - Boa experiência, $5-20/mês
 - [ ] **Fly.io** - Ótima performance
 - [ ] **Digital Ocean** - Estável, $12/mês
 
-#### Frontend (escolha uma):
+#### Interface (escolha uma):
 - [ ] **Vercel** - Melhor para React (recomendado)
 - [ ] **Netlify** - Alternativa sólida
 - [ ] **Cloudflare Pages** - Mais rápido
 
-#### Database (escolha uma):
-- [ ] **Supabase** - Free 500MB (recomendado para começar)
-- [ ] **Neon** - Free 3GB, excelente
-- [ ] **Railway** - Integrado com backend
-- [ ] **Digital Ocean** - Managed, $15/mês
+#### Banco de Dados (escolha uma):
+- [ ] **Supabase** - Gratuito 500MB (recomendado para começar)
+- [ ] **Neon** - Gratuito 3GB, excelente
+- [ ] **Railway** - Integrado com servidor
+- [ ] **Digital Ocean** - Gerenciado, $15/mês
 
 ---
 
-## 📦 Deploy Backend (Render)
+## 📦 Implantar Servidor (Render)
 
-### Passo 1: Criar Database
+### Passo 1: Criar Banco de Dados
 1. Acesse [Supabase](https://supabase.com) ou [Neon](https://neon.tech)
 2. Crie novo projeto
-3. Copie a connection string (DATABASE_URL)
+3. Copie a string de conexão (DATABASE_URL)
 
-### Passo 2: Deploy API
+### Passo 2: Implantar API
 1. Acesse [Render](https://render.com)
 2. Conecte seu repositório GitHub
 3. Clique "New" → "Blueprint"
@@ -56,7 +56,7 @@ bash scripts/generate-secrets.sh
    ```
 6. Clique "Apply"
 
-### Passo 3: Executar Migrations
+### Passo 3: Executar Migrações
 ```bash
 # No terminal do Render ou localmente
 npm run prisma:migrate:deploy
@@ -71,7 +71,7 @@ curl https://sua-api.onrender.com/health
 
 ---
 
-## 🎨 Deploy Frontend (Vercel)
+## 🎨 Implantar Interface (Vercel)
 
 ### Passo 1: Instalar CLI
 ```bash
@@ -86,7 +86,7 @@ VITE_APP_NAME=ZeroGuard
 VITE_APP_VERSION=1.0.0
 ```
 
-### Passo 3: Build Local (testar)
+### Passo 3: Compilação Local (testar)
 ```bash
 cd apps/web
 npm run build
@@ -95,7 +95,7 @@ npm run preview
 
 Abra http://localhost:4173 e teste login/registro
 
-### Passo 4: Deploy
+### Passo 4: Implantar
 ```bash
 vercel --prod
 ```
@@ -110,9 +110,9 @@ Ou via GitHub:
    - **Build Command**: `npm run build`
    - **Output Directory**: `dist`
 5. Adicione variável: `VITE_API_URL`
-6. Deploy!
+6. Implante!
 
-### Passo 5: Configurar CORS no Backend
+### Passo 5: Configurar CORS no Servidor
 Atualize `CORS_ORIGIN` no Render com URL do Vercel:
 ```
 CORS_ORIGIN=https://seu-app.vercel.app
@@ -128,7 +128,7 @@ CORS_ORIGIN=https://seu-app.vercel.app
 
 ### Passo 2: Configurar DNS
 
-**Para Frontend (Vercel):**
+**Para Interface (Vercel):**
 1. Vercel Dashboard → Settings → Domains
 2. Adicione seu domínio: `meuapp.com`
 3. Configure DNS:
@@ -137,7 +137,7 @@ CORS_ORIGIN=https://seu-app.vercel.app
    CNAME www     cname.vercel-dns.com
    ```
 
-**Para Backend (Render):**
+**Para Servidor (Render):**
 1. Render Dashboard → Settings → Custom Domain
 2. Adicione: `api.meuapp.com`
 3. Configure DNS:
@@ -150,7 +150,7 @@ CORS_ORIGIN=https://seu-app.vercel.app
 CORS_ORIGIN=https://meuapp.com,https://www.meuapp.com
 ```
 
-### Passo 4: Atualizar Frontend
+### Passo 4: Atualizar Interface
 ```env
 VITE_API_URL=https://api.meuapp.com
 ```
@@ -159,16 +159,16 @@ VITE_API_URL=https://api.meuapp.com
 
 ## 🔒 Segurança
 
-### Headers de Segurança
+### Cabeçalhos de Segurança
 ✅ Já configurados em `vercel.json` e `netlify.toml`
 
 ### SSL/HTTPS
 ✅ Automático no Vercel, Render, Netlify
 
-### Rate Limiting
-✅ Verificar se está ativo no backend
+### Limitação de Taxa
+✅ Verificar se está ativa no servidor
 
-### Backups Database
+### Backups do Banco de Dados
 ```bash
 # Configurar backup diário
 pg_dump DATABASE_URL | gzip > backup.sql.gz
@@ -180,12 +180,12 @@ Supabase e Neon fazem backups automáticos.
 
 ## 📊 Monitoramento
 
-### 1. Uptime Monitoring
-- [UptimeRobot](https://uptimerobot.com) - Free
+### 1. Monitoramento de Tempo de Atividade
+- [UptimeRobot](https://uptimerobot.com) - Gratuito
 - Adicione monitor para: `https://sua-api.onrender.com/health`
 
-### 2. Error Tracking (Opcional)
-- [Sentry](https://sentry.io) - Free tier generoso
+### 2. Rastreamento de Erros (Opcional)
+- [Sentry](https://sentry.io) - Plano gratuito generoso
 ```bash
 npm install @sentry/node @sentry/react
 ```
@@ -197,11 +197,11 @@ npm install @sentry/node @sentry/react
 
 ---
 
-## ✅ Checklist Final
+## ✅ Lista de Verificação Final
 
 ### Antes de Anunciar
-- [ ] Backend respondendo em produção
-- [ ] Frontend acessível
+- [ ] Servidor respondendo em produção
+- [ ] Interface acessível
 - [ ] Login funcionando
 - [ ] Registro funcionando
 - [ ] Logout funcionando
@@ -213,7 +213,7 @@ npm install @sentry/node @sentry/react
 
 ### Testes em Produção
 ```bash
-# 1. Health check
+# 1. Verificação de saúde
 curl https://api.meuapp.com/health
 
 # 2. Registrar usuário
@@ -246,24 +246,24 @@ Testar em: https://pagespeed.web.dev/
 
 ## 💰 Custos Mensais
 
-### Setup Free (começar)
+### Configuração Gratuita (começar)
 ```
-✅ Vercel Free
-✅ Render Free (750h)
-✅ Supabase Free (500MB)
-✅ UptimeRobot Free
+✅ Vercel Gratuito
+✅ Render Gratuito (750h)
+✅ Supabase Gratuito (500MB)
+✅ UptimeRobot Gratuito
 ❌ Domínio: ~$1/mês
 
 Total: ~$1/mês
 ```
 
-### Setup Recomendado
+### Configuração Recomendada
 ```
-✅ Vercel Free
-💵 Render Starter: $7/mês
+✅ Vercel Gratuito
+💵 Render Inicial: $7/mês
 💵 Neon Scale: $19/mês
-✅ Sentry Free
-✅ Cloudflare Free
+✅ Sentry Gratuito
+✅ Cloudflare Gratuito
 💵 Domínio: $1/mês
 
 Total: ~$27/mês
@@ -273,32 +273,32 @@ Total: ~$27/mês
 
 ## 🆘 Problemas Comuns
 
-### CORS Error
+### Erro de CORS
 ```
 Access-Control-Allow-Origin missing
 ```
-**Solução**: Verificar `CORS_ORIGIN` no backend inclui URL do frontend
+**Solução**: Verificar `CORS_ORIGIN` no servidor inclui URL da interface
 
-### Database Connection Error
+### Erro de Conexão com Banco de Dados
 ```
 connect ETIMEDOUT
 ```
 **Solução**: Adicionar `?sslmode=require` na DATABASE_URL
 
-### Build Error
+### Erro de Compilação
 ```
 Cannot find module '@/...'
 ```
 **Solução**: Verificar path aliases em `vite.config.ts`
 
 ### 502 Bad Gateway
-**Solução**: Backend não iniciou corretamente, verificar logs
+**Solução**: Servidor não iniciou corretamente, verificar logs
 
 ---
 
 ## 📞 Próximos Passos
 
-Após deploy bem-sucedido:
+Após implantação bem-sucedida:
 1. ✅ Configurar domínio personalizado
 2. ✅ Ativar monitoramento
 3. ✅ Configurar backups
@@ -312,5 +312,5 @@ Seu ZeroGuard está em produção! 🚀
 
 **Links úteis:**
 - 📚 [Documentação completa](./PRODUCTION.md)
-- 🔧 [Troubleshooting](./PRODUCTION.md#-troubleshooting)
+- 🔧 [Solução de problemas](./PRODUCTION.md#-solução-de-problemas)
 - 💬 [Suporte](./PRODUCTION.md#-suporte)

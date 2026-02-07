@@ -1,21 +1,21 @@
-# 🚀 Guia de Deploy em Produção
+# 🚀 Guia de Implantação em Produção
 
 Este guia cobre todas as configurações necessárias para colocar o ZeroGuard em produção com segurança e performance otimizada.
 
-## 📋 Checklist Pré-Deploy
+## 📋 Lista de Verificação Pré-Implantação
 
-### Backend
+### Servidor
 - [ ] Banco de dados PostgreSQL configurado
 - [ ] Variáveis de ambiente configuradas
-- [ ] Rate limiting ativado
+- [ ] Limitação de taxa ativada
 - [ ] CORS configurado corretamente
 - [ ] HTTPS/SSL configurado
-- [ ] Logging habilitado
+- [ ] Registro habilitado
 - [ ] Monitoramento configurado
 - [ ] Backups automáticos
 
-### Frontend
-- [ ] Build de produção testado
+### Interface
+- [ ] Compilação de produção testada
 - [ ] Variáveis de ambiente configuradas
 - [ ] CDN configurado (opcional)
 - [ ] Service Worker para PWA (opcional)
@@ -23,23 +23,23 @@ Este guia cobre todas as configurações necessárias para colocar o ZeroGuard e
 
 ### Segurança
 - [ ] Senhas fortes configuradas
-- [ ] Secrets rotacionados
+- [ ] Segredos rotacionados
 - [ ] Firewall configurado
-- [ ] CSP (Content Security Policy)
-- [ ] Headers de segurança
+- [ ] CSP (Política de Segurança de Conteúdo)
+- [ ] Cabeçalhos de segurança
 - [ ] Certificado SSL válido
 
 ---
 
 ## 1️⃣ Banco de Dados PostgreSQL
 
-### Opções de Hosting
+### Opções de Hospedagem
 
-#### A) Managed Database (Recomendado)
-- **Supabase** (Free tier: 500MB, 2GB transfer)
-- **Neon** (Free tier: 3GB, autoscaling)
+#### A) Banco de Dados Gerenciado (Recomendado)
+- **Supabase** (Plano gratuito: 500MB, 2GB transferência)
+- **Neon** (Plano gratuito: 3GB, dimensionamento automático)
 - **Railway** ($5/mês, 8GB RAM)
-- **AWS RDS** (produção enterprise)
+- **AWS RDS** (produção empresarial)
 - **Digital Ocean Managed Database** ($15/mês)
 
 #### B) Auto-hospedado
@@ -55,7 +55,7 @@ CREATE USER zeroguard_user WITH PASSWORD 'SENHA_FORTE_AQUI';
 GRANT ALL PRIVILEGES ON DATABASE zeroguard TO zeroguard_user;
 ```
 
-**2. Executar migrations:**
+**2. Executar migrações:**
 ```bash
 cd apps/api
 npm run prisma:migrate:deploy
@@ -74,19 +74,19 @@ find /backups -name "zeroguard_*.sql.gz" -mtime +30 -delete
 
 ---
 
-## 2️⃣ Backend (API Fastify)
+## 2️⃣ Servidor (API Fastify)
 
-### Opções de Hosting
+### Opções de Hospedagem
 
-| Provider | Free Tier | Preço | Recomendação |
-|----------|-----------|-------|--------------|
+| Provedor | Plano Gratuito | Preço | Recomendação |
+|----------|----------------|-------|--------------|
 | **Render** | 750h/mês | $0-7/mês | ✅ Melhor para começar |
-| **Railway** | $5 crédito | $5-20/mês | ✅ Ótimo DX |
+| **Railway** | $5 crédito | $5-20/mês | ✅ Ótima experiência |
 | **Fly.io** | 3 VMs | $0-10/mês | ✅ Performance |
 | **Digital Ocean** | - | $5-12/mês | ✅ Estável |
-| **AWS/GCP** | Complexo | Variável | 🏢 Enterprise |
+| **AWS/GCP** | Complexo | Variável | 🏢 Empresarial |
 
-### Deploy no Render (Recomendado)
+### Implantar no Render (Recomendado)
 
 **1. Criar `render.yaml`:**
 ```yaml
@@ -123,12 +123,12 @@ NODE_ENV=production
 PORT=4000
 HOST=0.0.0.0
 
-# Database (Supabase/Neon/Railway)
+# Banco de dados (Supabase/Neon/Railway)
 DATABASE_URL="postgresql://user:password@host:5432/zeroguard?sslmode=require"
 
 # JWT
-JWT_SECRET="SECRET_ALEATÓRIO_64_CARACTERES_AQUI"
-JWT_REFRESH_SECRET="OUTRO_SECRET_DIFERENTE_64_CARACTERES"
+JWT_SECRET="SEGREDO_ALEATORIO_64_CARACTERES_AQUI"
+JWT_REFRESH_SECRET="OUTRO_SEGREDO_DIFERENTE_64_CARACTERES"
 JWT_EXPIRES_IN="15m"
 JWT_REFRESH_EXPIRES_IN="7d"
 
@@ -138,20 +138,20 @@ ENCRYPTION_KEY="CHAVE_256_BITS_BASE64_AQUI"
 # CORS
 CORS_ORIGIN="https://seu-dominio.com"
 
-# Rate Limiting
+# Limitação de Taxa
 RATE_LIMIT_MAX=100
 RATE_LIMIT_WINDOW="15m"
 
-# Logging
+# Registro
 LOG_LEVEL=info
 ```
 
-**3. Gerar secrets seguros:**
+**3. Gerar segredos seguros:**
 ```bash
-# JWT Secret
+# Segredo JWT
 node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 
-# Encryption Key
+# Chave de Criptografia
 node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ```
 
@@ -166,7 +166,7 @@ await app.register(fastifyCors, {
 });
 ```
 
-**5. Adicionar Health Check:**
+**5. Adicionar Verificação de Saúde:**
 
 Criar `apps/api/src/routes/health.ts`:
 ```typescript
@@ -183,16 +183,16 @@ export async function healthRoutes(app: FastifyInstance) {
 }
 ```
 
-**6. Build de produção:**
+**6. Compilação de produção:**
 ```bash
 cd apps/api
 npm run build
 npm run start:prod
 ```
 
-### Deploy no Railway
+### Implantar no Railway
 
-**1. Instalar Railway CLI:**
+**1. Instalar CLI do Railway:**
 ```bash
 npm install -g @railway/cli
 railway login
@@ -211,25 +211,25 @@ railway variables set JWT_SECRET="..."
 railway variables set NODE_ENV=production
 ```
 
-**4. Deploy:**
+**4. Implantar:**
 ```bash
 railway up
 ```
 
 ---
 
-## 3️⃣ Frontend (React/Vite)
+## 3️⃣ Interface (React/Vite)
 
-### Opções de Hosting
+### Opções de Hospedagem
 
-| Provider | Free Tier | CDN | Recomendação |
-|----------|-----------|-----|--------------|
+| Provedor | Plano Gratuito | CDN | Recomendação |
+|----------|----------------|-----|--------------|
 | **Vercel** | Ilimitado | ✅ | ✅ Melhor para React |
 | **Netlify** | 100GB/mês | ✅ | ✅ Alternativa |
 | **Cloudflare Pages** | Ilimitado | ✅ | ✅ Mais rápido |
 | **GitHub Pages** | Ilimitado | ✅ | ⚠️ Sem APIs |
 
-### Deploy no Vercel (Recomendado)
+### Implantar no Vercel (Recomendado)
 
 **1. Instalar CLI:**
 ```bash
@@ -285,7 +285,7 @@ VITE_APP_NAME=ZeroGuard
 VITE_APP_VERSION=1.0.0
 ```
 
-**4. Atualizar API client:**
+**4. Atualizar cliente da API:**
 
 Editar `apps/web/src/api/client.ts`:
 ```typescript
@@ -311,7 +311,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Interceptor para refresh token
+// Interceptor para atualização de token
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -342,19 +342,19 @@ api.interceptors.response.use(
 );
 ```
 
-**5. Build de produção:**
+**5. Compilação de produção:**
 ```bash
 cd apps/web
 npm run build
-npm run preview # Testar build localmente
+npm run preview # Testar compilação localmente
 ```
 
-**6. Deploy:**
+**6. Implantar:**
 ```bash
 vercel --prod
 ```
 
-### Deploy no Netlify
+### Implantar no Netlify
 
 **1. Criar `netlify.toml`:**
 ```toml
@@ -377,7 +377,7 @@ vercel --prod
     Referrer-Policy = "strict-origin-when-cross-origin"
 ```
 
-**2. Deploy:**
+**2. Implantar:**
 ```bash
 npm install -g netlify-cli
 netlify deploy --prod
@@ -402,7 +402,7 @@ A     @        76.76.21.21
 CNAME www      cname.vercel-dns.com
 ```
 
-Para backend (Render):
+Para servidor (Render):
 ```
 CNAME api      your-app.onrender.com
 ```
@@ -412,7 +412,7 @@ CNAME api      your-app.onrender.com
 ✅ **Automático** em Vercel, Netlify, Render, Railway
 - Certificado Let's Encrypt gratuito
 - Renovação automática
-- HTTP → HTTPS redirect
+- Redirecionamento HTTP → HTTPS
 
 ### Cloudflare (Opcional mas Recomendado)
 
@@ -421,22 +421,22 @@ CNAME api      your-app.onrender.com
 - Proteção DDoS
 - Firewall WAF
 - Analytics
-- **Free tier generoso**
+- **Plano gratuito generoso**
 
 **Configuração:**
 1. Adicionar site no Cloudflare
 2. Mudar nameservers do domínio
 3. Ativar SSL/TLS (modo "Full")
 4. Ativar "Always Use HTTPS"
-5. Page Rules para cache
+5. Regras de página para cache
 
 ---
 
 ## 5️⃣ Segurança
 
-### Headers de Segurança
+### Cabeçalhos de Segurança
 
-Adicionar no backend (`apps/api/src/server.ts`):
+Adicionar no servidor (`apps/api/src/server.ts`):
 ```typescript
 import helmet from '@fastify/helmet';
 
@@ -453,7 +453,7 @@ await app.register(helmet, {
 });
 ```
 
-### Rate Limiting
+### Limitação de Taxa
 
 ```typescript
 import rateLimit from '@fastify/rate-limit';
@@ -502,11 +502,11 @@ app.post('/auth/login', async (req, reply) => {
 
 ---
 
-## 6️⃣ Monitoramento e Logging
+## 6️⃣ Monitoramento e Registro
 
-### Logging de Produção
+### Registro de Produção
 
-**Opção 1: Pino (Built-in Fastify)**
+**Opção 1: Pino (Integrado no Fastify)**
 ```typescript
 const app = fastify({
   logger: {
@@ -569,18 +569,18 @@ Sentry.init({
 });
 ```
 
-**Opção 2: Uptime Monitoring**
-- UptimeRobot (free, 50 monitores)
-- Better Stack (free tier)
+**Opção 2: Monitoramento de Tempo de Atividade**
+- UptimeRobot (gratuito, 50 monitores)
+- Better Stack (plano gratuito)
 - Pingdom (pago)
 
 ---
 
 ## 7️⃣ Performance
 
-### Backend
+### Servidor
 
-**1. Caching com Redis:**
+**1. Cache com Redis:**
 ```bash
 npm install @fastify/redis
 ```
@@ -604,7 +604,7 @@ app.get('/api/stats', async (req, reply) => {
 });
 ```
 
-**2. Compression:**
+**2. Compressão:**
 ```typescript
 import compress from '@fastify/compress';
 
@@ -614,9 +614,9 @@ await app.register(compress, {
 });
 ```
 
-### Frontend
+### Interface
 
-**1. Code Splitting:**
+**1. Divisão de Código:**
 ```typescript
 // apps/web/src/App.tsx
 import { lazy, Suspense } from 'react';
@@ -630,7 +630,7 @@ const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 </Suspense>
 ```
 
-**2. Otimizar Build:**
+**2. Otimizar Compilação:**
 ```typescript
 // vite.config.ts
 export default defineConfig({
@@ -648,7 +648,7 @@ export default defineConfig({
 });
 ```
 
-**3. Image Optimization:**
+**3. Otimização de Imagens:**
 ```typescript
 // Usar Cloudinary ou imgix
 const imageUrl = `https://res.cloudinary.com/<cloud-name>/image/upload/w_400,f_auto,q_auto/v1/${imagePath}`;
@@ -662,7 +662,7 @@ const imageUrl = `https://res.cloudinary.com/<cloud-name>/image/upload/w_400,f_a
 
 Criar `.github/workflows/deploy.yml`:
 ```yaml
-name: Deploy to Production
+name: Implantar em Produção
 
 on:
   push:
@@ -685,7 +685,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Deploy to Render
+      - name: Implantar no Render
         run: |
           curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
 
@@ -696,7 +696,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
       - run: cd apps/web && npm install && npm run build
-      - name: Deploy to Vercel
+      - name: Implantar no Vercel
         uses: amondnet/vercel-action@v20
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -708,35 +708,35 @@ jobs:
 
 ## 9️⃣ Custos Estimados
 
-### Setup Mínimo (Free)
+### Configuração Mínima (Gratuita)
 ```
-Frontend: Vercel Free
-Backend: Render Free (750h/mês)
-Database: Supabase Free (500MB)
+Interface: Vercel Gratuito
+Servidor: Render Gratuito (750h/mês)
+Banco de Dados: Supabase Gratuito (500MB)
 Domínio: $10/ano
 SSL: Grátis (Let's Encrypt)
 
 Total: ~$1/mês
 ```
 
-### Setup Recomendado (Pequeno)
+### Configuração Recomendada (Pequena)
 ```
-Frontend: Vercel Free + CDN
-Backend: Render Starter ($7/mês)
-Database: Neon Scale ($19/mês)
-Monitoring: Sentry Free
-Redis: Upstash Free
+Interface: Vercel Gratuito + CDN
+Servidor: Render Starter ($7/mês)
+Banco de Dados: Neon Scale ($19/mês)
+Monitoramento: Sentry Gratuito
+Redis: Upstash Gratuito
 
 Total: ~$26/mês
 ```
 
-### Setup Profissional (Médio)
+### Configuração Profissional (Média)
 ```
-Frontend: Vercel Pro ($20/mês)
-Backend: Railway Pro ($20/mês)
-Database: Digital Ocean Managed ($15/mês)
+Interface: Vercel Pro ($20/mês)
+Servidor: Railway Pro ($20/mês)
+Banco de Dados: Digital Ocean Managed ($15/mês)
 Redis: Upstash Pro ($10/mês)
-Monitoring: Sentry Team ($26/mês)
+Monitoramento: Sentry Team ($26/mês)
 Backups: Automático
 
 Total: ~$91/mês
@@ -744,22 +744,22 @@ Total: ~$91/mês
 
 ---
 
-## 🔟 Checklist Final
+## 🔟 Lista de Verificação Final
 
-### Antes do Deploy
+### Antes da Implantação
 - [ ] Todos os testes passando
-- [ ] Build de produção funciona localmente
+- [ ] Compilação de produção funciona localmente
 - [ ] Variáveis de ambiente configuradas
-- [ ] Secrets gerados e seguros
+- [ ] Segredos gerados e seguros
 - [ ] CORS configurado corretamente
-- [ ] Rate limiting ativado
-- [ ] Logging habilitado
+- [ ] Limitação de taxa ativada
+- [ ] Registro habilitado
 
-### Pós-Deploy
-- [ ] Health check funcionando
+### Pós-Implantação
+- [ ] Verificação de saúde funcionando
 - [ ] SSL/HTTPS ativo
 - [ ] Domínio apontando corretamente
-- [ ] Frontend → Backend comunicando
+- [ ] Interface → Servidor comunicando
 - [ ] Login/Registro funcionando
 - [ ] Monitoramento ativo
 - [ ] Backups configurados
@@ -767,7 +767,7 @@ Total: ~$91/mês
 
 ### Testes em Produção
 ```bash
-# Health check
+# Verificação de saúde
 curl https://api.seudominio.com/health
 
 # Login
@@ -802,23 +802,23 @@ curl -I https://api.seudominio.com \
 
 ---
 
-## 🆘 Troubleshooting
+## 🆘 Solução de Problemas
 
-### CORS Error
+### Erro de CORS
 ```
-Access to fetch at 'https://api.com' from origin 'https://app.com' has been blocked by CORS
+Acesso ao fetch 'https://api.com' da origem 'https://app.com' foi bloqueado pelo CORS
 ```
 
 **Solução:**
 ```typescript
-// Backend
+// Servidor
 await app.register(fastifyCors, {
   origin: 'https://app.com',
   credentials: true,
 });
 ```
 
-### Database Connection Error
+### Erro de Conexão com Banco de Dados
 ```
 Error: connect ETIMEDOUT
 ```
@@ -829,7 +829,7 @@ Error: connect ETIMEDOUT
 - [ ] Firewall permite conexões
 - [ ] IP está na whitelist (se aplicável)
 
-### Build Failure
+### Falha na Compilação
 ```
 Error: Cannot find module '@/components/ui'
 ```
@@ -850,8 +850,8 @@ resolve: {
 
 Se encontrar problemas:
 1. Verifique os logs (`heroku logs --tail` ou similar)
-2. Teste localmente com build de produção
+2. Teste localmente com compilação de produção
 3. Consulte a documentação da plataforma
 4. Abra issue no GitHub do projeto
 
-**Boa sorte com o deploy! 🚀**
+**Boa sorte com a implantação! 🚀**

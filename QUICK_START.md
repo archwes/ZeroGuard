@@ -1,4 +1,4 @@
-# 🚀 INÍCIO RÁPIDO - Frontend ZeroGuard
+# 🚀 INÍCIO RÁPIDO - Interface ZeroGuard
 
 > 💡 **Primeira vez configurando o projeto?** Veja o guia completo passo a passo: [LOCAL_SETUP.md](./LOCAL_SETUP.md)
 > 
@@ -176,10 +176,10 @@ O aplicativo estará disponível em: **http://localhost:3000**
 
 ## 🔧 Próximos Passos
 
-### Conectar Backend
+### Conectar Servidor
 
 ```typescript
-// No arquivo de API client (criar)
+// No arquivo de cliente da API (criar)
 import axios from 'axios';
 
 const api = axios.create({
@@ -231,19 +231,19 @@ Acesse o app rodando e veja:
 
 ## 🐛 Debug
 
-### Console do Browser
-Abra DevTools (F12) e veja:
+### Console do Navegador
+Abra Ferramentas do Desenvolvedor (F12) e veja:
 - Sem erros de console
 - React DevTools funcionando
-- Network requests (quando conectar backend)
+- Requisições de rede (quando conectar servidor)
 
 ### Hot Reload
 Edite qualquer arquivo `.tsx` e veja mudanças instantâneas!
 
 ## 💡 Dicas
 
-1. **Performance**: Abra DevTools > Performance para ver 60 FPS
-2. **Responsivo**: Teste em mobile (DevTools > Toggle device toolbar)
+1. **Performance**: Abra Ferramentas do Desenvolvedor > Performance para ver 60 FPS
+2. **Responsivo**: Teste em mobile (Ferramentas do Desenvolvedor > Toggle device toolbar)
 3. **PWA**: Futuro - adicionar service worker para offline
 4. **Acessibilidade**: Use leitor de tela para testar
 
@@ -260,20 +260,20 @@ Edite qualquer arquivo `.tsx` e veja mudanças instantâneas!
 | Rotas | ✅ 100% |
 | Autenticação Básica | ✅ 100% |
 | Login/Registro | ✅ 100% |
-| Criptografia Client | ⏳ Pendente |
-| API Integration | ⏳ Pendente |
+| Criptografia Cliente | ⏳ Pendente |
+| Integração de API | ⏳ Pendente |
 
 ---
 
 ## 🚀 Colocar em Produção
 
 ### Documentação Completa
-📄 **[PRODUCTION.md](./PRODUCTION.md)** - Guia completo de deploy com todas as configurações
+📄 **[PRODUCTION.md](./PRODUCTION.md)** - Guia completo de implantação com todas as configurações
 
-### Checklist Rápido
-📋 **[DEPLOY_CHECKLIST.md](./DEPLOY_CHECKLIST.md)** - Passo a passo para deploy
+### Lista de Verificação Rápida
+📋 **[DEPLOY_CHECKLIST.md](./DEPLOY_CHECKLIST.md)** - Passo a passo para implantação
 
-### Gerar Secrets
+### Gerar Segredos
 ```powershell
 # Windows
 .\scripts\generate-secrets.ps1
@@ -283,27 +283,27 @@ bash scripts/generate-secrets.sh
 ```
 
 ### Plataformas Recomendadas
-- **Backend**: Render ($7/mês) ou Railway ($5/mês)
-- **Frontend**: Vercel (Free) ou Netlify (Free)
-- **Database**: Supabase (Free) ou Neon (Free)
+- **Servidor**: Render ($7/mês) ou Railway ($5/mês)
+- **Interface**: Vercel (Gratuito) ou Netlify (Gratuito)
+- **Banco de Dados**: Supabase (Gratuito) ou Neon (Gratuito)
 
-### Deploy Rápido
+### Implantação Rápida
 ```bash
 # 1. Configure variáveis de ambiente
 cp apps/api/.env.production.example apps/api/.env.production
 cp apps/web/.env.production.example apps/web/.env.production
 
-# 2. Deploy backend (Render/Railway)
+# 2. Implantar servidor (Render/Railway)
 # Use arquivo render.yaml ou Railway CLI
 
-# 3. Deploy frontend (Vercel)
+# 3. Implantar interface (Vercel)
 cd apps/web
 vercel --prod
 ```
 
 ### Custos
-- **Grátis**: ~$1/mês (apenas domínio)
-- **Recomendado**: ~$27/mês (backend + database)
+- **Gratuito**: ~$1/mês (apenas domínio)
+- **Recomendado**: ~$27/mês (servidor + banco de dados)
 
 ---
 

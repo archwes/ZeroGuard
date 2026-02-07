@@ -1,27 +1,27 @@
 /**
- * 🔐 CRITICAL SECURITY MODULE - Core Cryptography Primitives
+ * 🔐 MÓDULO DE SEGURANÇA CRÍTICO - Primitivas Criptográficas Centrais
  * 
- * Zero-Knowledge Encryption Implementation
+ * Implementação de Criptografia de Conhecimento Zero
  * 
- * This module implements the cryptographic foundation for ZeroGuard's
- * zero-knowledge architecture. All encryption happens client-side.
- * The server NEVER has access to plaintext data or encryption keys.
+ * Este módulo implementa a base criptográfica para a arquitetura de
+ * conhecimento zero do ZeroGuard. Toda criptografia acontece no cliente.
+ * O servidor NUNCA tem acesso a dados em texto claro ou chaves de criptografia.
  * 
- * Key Principles:
- * 1. Master password never leaves the client
- * 2. All keys derived using memory-hard Argon2id
- * 3. Per-item encryption with AES-256-GCM
- * 4. Item keys wrapped with Master Encryption Key (MEK)
- * 5. Authenticated encryption prevents tampering
+ * Princípios Chave:
+ * 1. Senha mestra nunca deixa o cliente
+ * 2. Todas as chaves derivadas usando Argon2id (resistente a memória)
+ * 3. Criptografia por item com AES-256-GCM
+ * 4. Chaves de item envolvidas com Chave Mestra de Criptografia (MEK)
+ * 5. Criptografia autenticada previne adulteração
  * 
- * Security Guarantees:
- * - Database breach: Data remains encrypted
- * - Server compromise: Cannot decrypt user data
- * - Memory-hard KDF: Resistant to GPU/ASIC attacks
- * - Forward secrecy: Old data stays safe with key rotation
+ * Garantias de Segurança:
+ * - Violação de banco de dados: Dados permanecem criptografados
+ * - Comprometimento de servidor: Não pode descriptografar dados do usuário
+ * - KDF resistente a memória: Resistente a ataques GPU/ASIC
+ * - Sigilo futuro: Dados antigos ficam seguros com rotação de chave
  * 
  * @module crypto/core
- * @security CRITICAL - Any changes require security review
+ * @security CRÍTICO - Qualquer mudança requer revisão de segurança
  */
 
 import { gcm } from '@noble/ciphers/aes';
@@ -40,31 +40,31 @@ const randomBytes = (size: number): Uint8Array => {
 };
 
 /**
- * Cryptographic constants following industry best practices
+ * Constantes criptográficas seguindo as melhores práticas da indústria
  */
 export const CRYPTO_CONSTANTS = {
-  // Key sizes (in bytes)
-  KEY_SIZE: 32,              // 256 bits for AES-256
-  SALT_SIZE: 32,             // 256 bits for uniqueness
-  NONCE_SIZE: 12,            // 96 bits (recommended for GCM)
-  AUTH_TAG_SIZE: 16,         // 128 bits for authentication
+  // Tamanhos de chave (em bytes)
+  KEY_SIZE: 32,              // 256 bits para AES-256
+  SALT_SIZE: 32,             // 256 bits para unicidade
+  NONCE_SIZE: 12,            // 96 bits (recomendado para GCM)
+  AUTH_TAG_SIZE: 16,         // 128 bits para autenticação
   
-  // Argon2id parameters (memory-hard, side-channel resistant)
-  // These are calibrated for ~300ms on modern hardware
-  ARGON2_ITERATIONS: 3,      // Time cost
-  ARGON2_MEMORY: 64 * 1024,  // 64 MB (in KB)
-  ARGON2_PARALLELISM: 4,     // Number of threads
-  ARGON2_OUTPUT_SIZE: 64,    // 512 bits (split into MEK + AK)
+  // Parâmetros Argon2id (resistente a memória, resistente a canal lateral)
+  // Calibrados para ~300ms em hardware moderno
+  ARGON2_ITERATIONS: 3,      // Custo de tempo
+  ARGON2_MEMORY: 64 * 1024,  // 64 MB (em KB)
+  ARGON2_PARALLELISM: 4,     // Número de threads
+  ARGON2_OUTPUT_SIZE: 64,    // 512 bits (dividido em MEK + AK)
   
-  // Key derivation info strings (for HKDF-like separation)
+  // Strings de informação para derivação de chave (separação tipo HKDF)
   KEY_INFO_MEK: 'ZeroGuard-MEK-v1',
   KEY_INFO_AK: 'ZeroGuard-AK-v1',
   KEY_INFO_WRAPPING: 'ZeroGuard-Wrapping-v1',
 } as const;
 
 /**
- * Secure key material holder
- * Implements memory zeroing patterns
+ * Contentor seguro de material de chave
+ * Implementa padrões de zeramento de memória
  */
 export class SecureKey {
   private key: Uint8Array;
@@ -75,28 +75,28 @@ export class SecureKey {
   }
 
   /**
-   * Get the key material (use with caution)
+   * Obter o material da chave (usar com cuidado)
    */
   getKey(): Uint8Array {
     if (this.isCleared) {
-      throw new Error('Key has been cleared from memory');
+      throw new Error('Chave foi limpa da memória');
     }
     return this.key;
   }
 
   /**
-   * Clear key from memory (called on logout/lock)
+   * Limpar chave da memória (chamado no logout/bloqueio)
    * 
-   * Security: Overwrite memory with random data before zeroing
-   * Prevents recovery from memory dumps
+   * Segurança: Sobrescrever memória com dados aleatórios antes de zerar
+   * Previne recuperação de despejos de memória
    */
   clear(): void {
     if (!this.isCleared) {
-      // Overwrite with random data first
+      // Sobrescrever com dados aleatórios primeiro
       const random = randomBytes(this.key.length);
       this.key.set(random);
       
-      // Then zero out
+      // Então zerar
       this.key.fill(0);
       this.isCleared = true;
     }

@@ -1,4 +1,4 @@
-# 🏠 Setup Local - Rodando na Sua Máquina e Rede
+# 🏠 Configuração Local - Rodando na Sua Máquina e Rede
 
 Guia completo passo a passo para rodar o ZeroGuard localmente e acessá-lo na sua rede local.
 
@@ -79,15 +79,15 @@ brew services start postgresql@15
 
 ## 🗄️ Configurar Banco de Dados
 
-### Passo 1: Criar Database
+### Passo 1: Criar Banco de Dados
 
 **Windows (pgAdmin):**
 1. Abra pgAdmin
 2. Conecte ao servidor local
 3. Clique direito em "Databases" → "Create" → "Database"
 4. Nome: `zeroguard_dev`
-5. Owner: `postgres`
-6. Save
+5. Proprietário: `postgres`
+6. Salvar
 
 **Windows/Linux/Mac (Terminal):**
 ```bash
@@ -139,7 +139,7 @@ cd zeroguard
 
 ## ⚙️ Configurar Variáveis de Ambiente
 
-### Backend (API)
+### Servidor (API)
 
 **Passo 1: Copiar arquivo de exemplo**
 ```powershell
@@ -187,7 +187,7 @@ LOG_LEVEL=debug
 - Substitua `SUA_SENHA` pela senha que você definiu no PostgreSQL
 - Se criou usuário específico, use: `postgresql://zeroguard_user:senha_segura_aqui@localhost:5432/zeroguard_dev`
 
-### Frontend (Web)
+### Interface (Web)
 
 **Passo 1: Copiar arquivo de exemplo**
 ```powershell
@@ -223,14 +223,14 @@ npm install
 
 Isso pode levar alguns minutos. ☕
 
-### Passo 2: Instalar dependências do backend
+### Passo 2: Instalar dependências do servidor
 ```bash
 cd apps/api
 npm install
 cd ../..
 ```
 
-### Passo 3: Instalar dependências do frontend
+### Passo 3: Instalar dependências da interface
 ```bash
 cd apps/web
 npm install
@@ -301,7 +301,7 @@ Isso inicia backend e frontend simultaneamente! 🎉
 
 ### Opção 2: Iniciar Separadamente
 
-**Terminal 1 - Backend:**
+**Terminal 1 - Servidor:**
 ```bash
 cd apps/api
 npm run dev
@@ -309,11 +309,11 @@ npm run dev
 
 Aguarde até ver:
 ```
-✓ Server listening on http://localhost:4000
-✓ Database connected
+✓ Servidor ouvindo em http://localhost:4000
+✓ Banco de dados conectado
 ```
 
-**Terminal 2 - Frontend (nova janela):**
+**Terminal 2 - Interface (nova janela):**
 ```bash
 cd apps/web
 npm run dev
@@ -350,11 +350,11 @@ ip addr show | grep "inet "
 # Procure por algo como: 192.168.1.100
 ```
 
-### Configurar Backend para Aceitar Conexões Externas
+### Configurar Servidor para Aceitar Conexões Externas
 
-O backend já está configurado com `HOST=0.0.0.0` no `.env`, então já aceita conexões da rede.
+O servidor já está configurado com `HOST=0.0.0.0` no `.env`, então já aceita conexões da rede.
 
-### Configurar Frontend para Rede
+### Configurar Interface para Rede
 
 **Editar `apps/web/.env`:**
 ```env
@@ -362,7 +362,7 @@ O backend já está configurado com `HOST=0.0.0.0` no `.env`, então já aceita 
 VITE_API_URL=http://192.168.1.100:4000
 ```
 
-**Reiniciar frontend:**
+**Reiniciar interface:**
 ```bash
 cd apps/web
 npm run dev
@@ -372,8 +372,8 @@ npm run dev
 
 Agora você pode acessar de qualquer dispositivo na mesma rede:
 
-- **Frontend:** `http://192.168.1.100:3000`
-- **Backend:** `http://192.168.1.100:4000`
+- **Interface:** `http://192.168.1.100:3000`
+- **Servidor:** `http://192.168.1.100:4000`
 
 **Dispositivos que podem acessar:**
 - ✅ Seu celular (via Wi-Fi)
@@ -400,7 +400,7 @@ Se outros dispositivos não conseguem acessar:
 
 ### Passo 2: Permitir Portas Específicas
 
-**Criar regra para porta 3000 (frontend):**
+**Criar regra para porta 3000 (interface):**
 1. "Regras de Entrada" → "Nova Regra"
 2. Tipo: "Porta"
 3. Protocolo: TCP
@@ -409,7 +409,7 @@ Se outros dispositivos não conseguem acessar:
 6. Perfis: Privada e Pública
 7. Nome: "Vite Dev Server"
 
-**Criar regra para porta 4000 (backend):**
+**Criar regra para porta 4000 (servidor):**
 - Repetir os passos acima com porta `4000`
 - Nome: "Fastify API Server"
 
@@ -417,7 +417,7 @@ Se outros dispositivos não conseguem acessar:
 
 ## ✅ Verificar se Está Tudo Funcionando
 
-### 1. Backend Health Check
+### 1. Verificação de Saúde do Servidor
 ```bash
 curl http://localhost:4000/health
 ```
@@ -431,7 +431,7 @@ curl http://localhost:4000/health
 }
 ```
 
-### 2. Frontend
+### 2. Interface
 Abra navegador: http://localhost:3000
 
 **Deve ver:**
@@ -481,13 +481,13 @@ No celular/tablet conectado na mesma Wi-Fi:
 
 ### Reiniciar com Cache Limpo
 ```bash
-# Frontend
+# Interface
 cd apps/web
 rm -rf node_modules/.vite  # Linux/Mac
 rmdir /s node_modules\.vite  # Windows
 npm run dev
 
-# Backend
+# Servidor
 cd apps/api
 npm run dev
 ```
@@ -559,26 +559,26 @@ rmdir /s /q node_modules && del package-lock.json  # Windows
 npm install
 ```
 
-### 5. Frontend não carrega (tela branca)
+### 5. Interface não carrega (tela branca)
 
 **Solução:**
-1. Abra DevTools (F12)
+1. Abra Ferramentas do Desenvolvedor (F12)
 2. Verifique Console por erros
-3. Comum: CORS error
+3. Comum: erro de CORS
 
 **Verificar CORS:**
-- Backend `.env` deve ter: `CORS_ORIGIN="http://localhost:3000"`
-- Frontend `.env` deve ter: `VITE_API_URL=http://localhost:4000`
+- Servidor `.env` deve ter: `CORS_ORIGIN="http://localhost:3000"`
+- Interface `.env` deve ter: `VITE_API_URL=http://localhost:4000`
 - Reinicie ambos
 
 ### 6. Não consigo acessar da rede
 
 **Checklist:**
-- [ ] Backend tem `HOST=0.0.0.0` no `.env`
-- [ ] Frontend `.env` tem IP correto: `VITE_API_URL=http://SEU_IP:4000`
+- [ ] Servidor tem `HOST=0.0.0.0` no `.env`
+- [ ] Interface `.env` tem IP correto: `VITE_API_URL=http://SEU_IP:4000`
 - [ ] Firewall está permitindo portas 3000 e 4000
 - [ ] Dispositivos estão na mesma rede Wi-Fi
-- [ ] Frontend foi reiniciado após mudar `.env`
+- [ ] Interface foi reiniciada após mudar `.env`
 
 ---
 
@@ -599,7 +599,7 @@ ipconfig
 # IPv4: 192.168.1.100 (exemplo)
 ```
 
-### Passo 3: Configurar Backend
+### Passo 3: Configurar Servidor
 
 Arquivo `apps/api/.env`:
 ```env
@@ -607,16 +607,16 @@ HOST=0.0.0.0
 CORS_ORIGIN="http://192.168.1.100:3000"
 ```
 
-Reinicie backend: `Ctrl+C` → `npm run dev`
+Reinicie servidor: `Ctrl+C` → `npm run dev`
 
-### Passo 4: Configurar Frontend
+### Passo 4: Configurar Interface
 
 Arquivo `apps/web/.env`:
 ```env
 VITE_API_URL=http://192.168.1.100:4000
 ```
 
-Reinicie frontend: `Ctrl+C` → `npm run dev`
+Reinicie interface: `Ctrl+C` → `npm run dev`
 
 ### Passo 5: Acessar no Celular
 
@@ -632,10 +632,10 @@ Reinicie frontend: `Ctrl+C` → `npm run dev`
 
 | Serviço | Localhost | Rede Local |
 |---------|-----------|------------|
-| **Frontend** | http://localhost:3000 | http://192.168.1.100:3000 |
-| **Backend API** | http://localhost:4000 | http://192.168.1.100:4000 |
+| **Interface** | http://localhost:3000 | http://192.168.1.100:3000 |
+| **Servidor API** | http://localhost:4000 | http://192.168.1.100:4000 |
 | **Prisma Studio** | http://localhost:5555 | ❌ (apenas local) |
-| **Health Check** | http://localhost:4000/health | http://192.168.1.100:4000/health |
+| **Verificação de Saúde** | http://localhost:4000/health | http://192.168.1.100:4000/health |
 
 ---
 
@@ -645,9 +645,9 @@ Depois que estiver rodando localmente:
 
 1. ✅ Explore a interface
 2. ✅ Crie vault items
-3. ✅ Teste dark/light mode
+3. ✅ Teste modo claro/escuro
 4. ✅ Leia [QUICK_START.md](./QUICK_START.md) para entender funcionalidades
-5. ✅ Quando pronto, leia [PRODUCTION.md](./PRODUCTION.md) para deploy
+5. ✅ Quando pronto, leia [PRODUCTION.md](./PRODUCTION.md) para implantação
 
 ---
 
@@ -655,12 +655,12 @@ Depois que estiver rodando localmente:
 
 ### Documentação
 - [README.md](./README.md) - Visão geral do projeto
-- [QUICK_START.md](./QUICK_START.md) - Guia do frontend
-- [PRODUCTION.md](./PRODUCTION.md) - Deploy em produção
+- [QUICK_START.md](./QUICK_START.md) - Guia da interface  
+- [PRODUCTION.md](./PRODUCTION.md) - Implantação em produção
 
 ### Logs
 ```bash
-# Ver logs detalhados do backend
+# Ver logs detalhados do servidor
 cd apps/api
 npm run dev -- --log-level debug
 

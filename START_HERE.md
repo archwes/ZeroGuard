@@ -12,7 +12,7 @@ Bem-vindo ao ZeroGuard! Este é seu ponto de partida.
 **Inclui:**
 - ✅ Instalação de todas as ferramentas necessárias
 - ✅ Configuração do banco de dados
-- ✅ Setup completo passo a passo
+- ✅ Configuração completa passo a passo
 - ✅ Como acessar de outros dispositivos na rede
 
 **Use junto com:** [SETUP_CHECKLIST.md](./SETUP_CHECKLIST.md) para acompanhar progresso
@@ -36,11 +36,11 @@ http://localhost:3000
 
 ---
 
-### 3️⃣ Quero colocar em produção (deploy na internet)
+### 3️⃣ Quero colocar em produção (implantar na internet)
 **→ Vá para:** [PRODUCTION.md](./PRODUCTION.md)
 
 **Também útil:**
-- [DEPLOY_CHECKLIST.md](./DEPLOY_CHECKLIST.md) - Passo a passo de deploy
+- [DEPLOY_CHECKLIST.md](./DEPLOY_CHECKLIST.md) - Passo a passo de implantação
 - [HOSTING_COMPARISON.md](./HOSTING_COMPARISON.md) - Onde hospedar
 
 **Custo:** $0-100/mês dependendo do plano
@@ -62,7 +62,7 @@ http://localhost:3000
 
 ```
 ┌──────────────────────────────────────────────────────┐
-│  1. LOCAL_SETUP.md (Setup inicial)                   │
+│  1. LOCAL_SETUP.md (Configuração inicial)            │
 │     ↓                                                 │
 │  2. SETUP_CHECKLIST.md (Marcar progresso)            │
 │     ↓                                                 │
@@ -72,7 +72,7 @@ http://localhost:3000
 │     ↓                                                 │
 │  5. README.md (Entender arquitetura)                 │
 │     ↓                                                 │
-│  6. PRODUCTION.md (Quando pronto para deploy)        │
+│  6. PRODUCTION.md (Quando pronto para implantar)     │
 └──────────────────────────────────────────────────────┘
 ```
 
@@ -83,8 +83,8 @@ http://localhost:3000
 ```
 zeroguard/
 ├── apps/
-│   ├── api/          # Backend (Fastify + Prisma)
-│   └── web/          # Frontend (React + Vite)
+│   ├── api/          # Servidor (Fastify + Prisma)
+│   └── web/          # Interface (React + Vite)
 ├── packages/
 │   └── crypto/       # Biblioteca de criptografia
 ├── scripts/          # Scripts úteis
@@ -97,27 +97,27 @@ zeroguard/
 
 ```bash
 # Desenvolvimento
-npm run dev              # Inicia backend + frontend
-cd apps/api && npm run dev     # Apenas backend
-cd apps/web && npm run dev     # Apenas frontend
+npm run dev              # Inicia servidor + interface
+cd apps/api && npm run dev     # Apenas servidor
+cd apps/web && npm run dev     # Apenas interface
 
 # Banco de dados
 cd apps/api
-npm run prisma:migrate:dev    # Executar migrations
+npm run prisma:migrate:dev    # Executar migrações
 npm run prisma:studio         # Interface visual do banco
 
-# Build para produção
-npm run build            # Build de todos os apps
-cd apps/api && npm run build  # Apenas backend
-cd apps/web && npm run build  # Apenas frontend
+# Compilação para produção
+npm run build            # Compilar todas as aplicações
+cd apps/api && npm run build  # Apenas servidor
+cd apps/web && npm run build  # Apenas interface
 
 # Testes
 npm test                 # Executar testes
 npm run lint             # Verificar código
 
 # Úteis
-.\scripts\generate-secrets.ps1     # Gerar secrets (Windows)
-.\scripts\pre-deploy-check.ps1     # Verificar antes deploy
+.\scripts\generate-secrets.ps1     # Gerar segredos (Windows)
+.\scripts\pre-deploy-check.ps1     # Verificar antes de implantar
 ```
 
 ---
@@ -132,17 +132,15 @@ npm run lint             # Verificar código
 
 | Problema | Solução |
 |----------|---------|
-| "Port already in use" | Ver [LOCAL_SETUP.md](./LOCAL_SETUP.md#-problemas-comuns) |
-| "Cannot connect to database" | Verificar se PostgreSQL está rodando |
-| CORS error | Verificar CORS_ORIGIN no `.env` |
-| Página branca | Abrir DevTools (F12) e ver console |
-| "Module not found" | Executar `npm install` |
+| "Porta já em uso" | Ver [LOCAL_SETUP.md](./LOCAL_SETUP.md#-problemas-comuns) |
+| "Não consegue conectar ao banco" | Verificar se PostgreSQL está rodando |
+| Erro de CORS | Verificar CORS_ORIGIN no `.env` |
+| Página branca | Abrir Ferramentas do Desenvolvedor (F12) e ver console |
+| "Módulo não encontrado" | Executar `npm install` |
 
-### Onde Buscar Respostas
-
-1. **Erros de setup:** [LOCAL_SETUP.md](./LOCAL_SETUP.md) → seção "Problemas Comuns"
-2. **Erros de deploy:** [PRODUCTION.md](./PRODUCTION.md) → seção "Troubleshooting"
-3. **Questões de segurança:** [README.md](./README.md) → seção "Security"
+1. **Erros de configuração:** [LOCAL_SETUP.md](./LOCAL_SETUP.md) → seção "Problemas Comuns"
+2. **Erros de implantação:** [PRODUCTION.md](./PRODUCTION.md) → seção "Solução de Problemas"
+3. **Questões de segurança:** [README.md](./README.md) → seção "Segurança"
 4. **Dúvidas gerais:** Leia os comentários no código
 
 ---
@@ -150,13 +148,13 @@ npm run lint             # Verificar código
 ## 📚 Todos os Guias Disponíveis
 
 ### Para Desenvolvimento Local
-- 🏠 [LOCAL_SETUP.md](./LOCAL_SETUP.md) - Setup completo
-- ✅ [SETUP_CHECKLIST.md](./SETUP_CHECKLIST.md) - Checklist interativo
+- 🏠 [LOCAL_SETUP.md](./LOCAL_SETUP.md) - Configuração completa
+- ✅ [SETUP_CHECKLIST.md](./SETUP_CHECKLIST.md) - Lista de verificação interativa
 - ⚡ [QUICK_START.md](./QUICK_START.md) - Guia rápido
 
-### Para Deploy em Produção
-- 🚀 [PRODUCTION.md](./PRODUCTION.md) - Guia completo de deploy
-- 📋 [DEPLOY_CHECKLIST.md](./DEPLOY_CHECKLIST.md) - Checklist de deploy
+### Para Implantação em Produção
+- 🚀 [PRODUCTION.md](./PRODUCTION.md) - Guia completo de implantação
+- 📋 [DEPLOY_CHECKLIST.md](./DEPLOY_CHECKLIST.md) - Lista de verificação de implantação
 - 🏢 [HOSTING_COMPARISON.md](./HOSTING_COMPARISON.md) - Comparar plataformas
 
 ### Para Entender o Projeto
@@ -172,7 +170,7 @@ Se você está com pressa e quer apenas ver funcionando:
 
 ### Opção 1: Docker (Mais rápido)
 ```bash
-# TODO: Adicionar Docker setup
+# TODO: Adicionar configuração Docker
 docker-compose up
 ```
 
@@ -191,7 +189,7 @@ cp apps/web/.env.example apps/web/.env
 # 4. Criar database
 psql -U postgres -c "CREATE DATABASE zeroguard_dev;"
 
-# 5. Executar migrations
+# 5. Executar migrações
 cd apps/api && npm run prisma:migrate:dev
 
 # 6. Iniciar aplicação
@@ -210,14 +208,14 @@ cd ../.. && npm run dev
 2. ✅ Instalar PostgreSQL
 3. ✅ Instalar Git
 
-### Etapa 2: Setup (10 min)
+### Etapa 2: Configuração (10 min)
 1. 📥 Clonar/baixar projeto
-2. ⚙️ Configurar `.env` files
-3. 🗄️ Criar database
+2. ⚙️ Configurar arquivos `.env`
+3. 🗄️ Criar banco de dados
 4. 📦 Instalar dependências
 
 ### Etapa 3: Execução (2 min)
-1. 🗃️ Executar migrations
+1. 🗃️ Executar migrações
 2. 🚀 Iniciar servidores
 3. ✅ Testar no navegador
 
@@ -237,9 +235,9 @@ cd ../.. && npm run dev
 Depois que tudo estiver funcionando localmente:
 
 1. **Explorar o código:**
-   - Backend: `apps/api/src/`
-   - Frontend: `apps/web/src/`
-   - Crypto: `packages/crypto/`
+   - Servidor: `apps/api/src/`
+   - Interface: `apps/web/src/`
+   - Criptografia: `packages/crypto/`
 
 2. **Adicionar funcionalidades:**
    - Implementar CRUD de vault items
@@ -247,7 +245,7 @@ Depois que tudo estiver funcionando localmente:
    - Adicionar gerador de senhas
    - Implementar 2FA/TOTP
 
-3. **Deploy:**
+3. **Implantação:**
    - Seguir [PRODUCTION.md](./PRODUCTION.md)
    - Escolher plataformas em [HOSTING_COMPARISON.md](./HOSTING_COMPARISON.md)
    - Usar [DEPLOY_CHECKLIST.md](./DEPLOY_CHECKLIST.md)
@@ -269,4 +267,4 @@ Depois que tudo estiver funcionando localmente:
 
 Qualquer dúvida, consulte os guias acima ou leia os comentários no código.
 
-**Happy coding! 💻**
+**Bom desenvolvimento! 💻**

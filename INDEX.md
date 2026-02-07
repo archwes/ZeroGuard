@@ -9,19 +9,19 @@ Navegação rápida para toda a documentação do ZeroGuard.
 | Arquivo | Descrição | Situação |
 |---------|-----------|----------|
 | **[START_HERE.md](./START_HERE.md)** | 🎯 Ponto de entrada - comece aqui | Nova pessoa |
-| **[LOCAL_SETUP.md](./LOCAL_SETUP.md)** | 🏠 Setup completo passo a passo | Primeira vez |
-| **[SETUP_CHECKLIST.md](./SETUP_CHECKLIST.md)** | ✅ Checklist interativo de setup | Durante setup |
+| **[LOCAL_SETUP.md](./LOCAL_SETUP.md)** | 🏠 Configuração completa passo a passo | Primeira vez |
+| **[SETUP_CHECKLIST.md](./SETUP_CHECKLIST.md)** | ✅ Lista de verificação interativa | Durante configuração |
 | **[QUICK_START.md](./QUICK_START.md)** | ⚡ Guia rápido de desenvolvimento | Ambiente pronto |
 
 ---
 
-## 🚀 Para Deploy
+## 🚀 Para Implantação
 
 | Arquivo | Descrição | Quando usar |
 |---------|-----------|-------------|
-| **[PRODUCTION.md](./PRODUCTION.md)** | 🚀 Guia completo de deploy em produção | Colocar no ar |
-| **[DEPLOY_CHECKLIST.md](./DEPLOY_CHECKLIST.md)** | 📋 Checklist passo a passo de deploy | Durante deploy |
-| **[HOSTING_COMPARISON.md](./HOSTING_COMPARISON.md)** | 🏢 Comparação de plataformas de hosting | Escolher onde hospedar |
+| **[PRODUCTION.md](./PRODUCTION.md)** | 🚀 Guia completo de implantação em produção | Colocar no ar |
+| **[DEPLOY_CHECKLIST.md](./DEPLOY_CHECKLIST.md)** | 📋 Lista de verificação passo a passo | Durante implantação |
+| **[HOSTING_COMPARISON.md](./HOSTING_COMPARISON.md)** | 🏢 Comparação de plataformas de hospedagem | Escolher onde hospedar |
 
 ---
 
@@ -30,7 +30,7 @@ Navegação rápida para toda a documentação do ZeroGuard.
 | Arquivo | Descrição | Conteúdo |
 |---------|-----------|----------|
 | **[README.md](./README.md)** | 📖 Visão geral do projeto | Arquitetura, segurança, fluxos |
-| **[AUTHENTICATION.md](./apps/web/AUTHENTICATION.md)** | 🔐 Sistema de autenticação | Como funciona o auth |
+| **[AUTHENTICATION.md](./apps/web/AUTHENTICATION.md)** | 🔐 Sistema de autenticação | Como funciona a autenticação |
 | **[FAQ.md](./FAQ.md)** | ❓ Perguntas frequentes | Respostas rápidas |
 
 ---
@@ -55,25 +55,25 @@ zeroguard/
 │   ├── START_HERE.md              🎯 Comece aqui
 │   ├── INDEX.md                   📖 Este arquivo
 │   ├── README.md                  📚 Visão geral
-│   ├── LOCAL_SETUP.md             🏠 Setup local
-│   ├── SETUP_CHECKLIST.md         ✅ Checklist de setup
+│   ├── LOCAL_SETUP.md             🏠 Configuração local
+│   ├── SETUP_CHECKLIST.md         ✅ Lista de verificação
 │   ├── QUICK_START.md             ⚡ Início rápido
-│   ├── PRODUCTION.md              🚀 Deploy produção
-│   ├── DEPLOY_CHECKLIST.md        📋 Checklist deploy
+│   ├── PRODUCTION.md              🚀 Implantação em produção
+│   ├── DEPLOY_CHECKLIST.md        📋 Lista de implantação
 │   └── HOSTING_COMPARISON.md      🏢 Comparar plataformas
 │
 ├── 📦 Aplicações
-│   ├── apps/api/                  🔧 Backend (Fastify)
+│   ├── apps/api/                  🔧 Servidor (Fastify)
 │   │   ├── src/                   Código fonte
-│   │   ├── prisma/                Schema do banco
+│   │   ├── prisma/                Esquema do banco
 │   │   ├── .env.example           Exemplo de configuração
 │   │   └── package.json           Dependências
 │   │
-│   └── apps/web/                  🎨 Frontend (React)
+│   └── apps/web/                  🎨 Interface (React)
 │       ├── src/                   Código fonte
 │       ├── public/                Arquivos públicos
 │       ├── .env.example           Exemplo de configuração
-│       ├── AUTHENTICATION.md      🔐 Doc de autenticação
+│       ├── AUTHENTICATION.md      🔐 Documentação de autenticação
 │       └── package.json           Dependências
 │
 ├── 📦 Packages Compartilhados
@@ -90,11 +90,11 @@ zeroguard/
 └── ⚙️ Configuração
     ├── .github/workflows/         CI/CD
     ├── .gitignore                 Arquivos ignorados
-    ├── package.json               Dependências root
-    ├── tsconfig.json              TypeScript config
-    ├── render.yaml                Config Render
-    ├── vercel.json                Config Vercel
-    └── netlify.toml               Config Netlify
+    ├── package.json               Dependências raiz
+    ├── tsconfig.json              Configuração TypeScript
+    ├── render.yaml                Configuração Render
+    ├── vercel.json                Configuração Vercel
+    └── netlify.toml               Configuração Netlify
 ```
 
 ---
@@ -116,17 +116,17 @@ zeroguard/
 1. QUICK_START.md         (5 min)   - Ver comandos
 2. README.md              (10 min)  - Arquitetura
 3. Explorar código        (∞)       - Entender implementação
-4. PRODUCTION.md          (quando)  - Deploy
+4. PRODUCTION.md          (quando)  - Implantação
 ```
 
-### Para Deploy em Produção
+### Para Implantação em Produção
 ```
 1. PRODUCTION.md          (30 min)  - Ler tudo
 2. HOSTING_COMPARISON.md  (15 min)  - Escolher plataformas
-3. DEPLOY_CHECKLIST.md    (durante) - Seguir checklist
-4. scripts/generate-secrets.ps1     - Gerar secrets
+3. DEPLOY_CHECKLIST.md    (durante) - Seguir lista
+4. scripts/generate-secrets.ps1     - Gerar segredos
 5. scripts/pre-deploy-check.ps1     - Validar
-6. Deploy!                           - Colocar no ar
+6. Implantar!                        - Colocar no ar
 ```
 
 ---
@@ -137,16 +137,16 @@ zeroguard/
 |---------------|----------------|
 | Configurar PostgreSQL | [LOCAL_SETUP.md](./LOCAL_SETUP.md#%EF%B8%8F-configurar-banco-de-dados) |
 | Variáveis de ambiente | [LOCAL_SETUP.md](./LOCAL_SETUP.md#%EF%B8%8F-configurar-variáveis-de-ambiente) |
-| Executar migrations | [LOCAL_SETUP.md](./LOCAL_SETUP.md#%EF%B8%8F-executar-migrations-criar-tabelas) |
+| Executar migrações | [LOCAL_SETUP.md](./LOCAL_SETUP.md#%EF%B8%8F-executar-migrations-criar-tabelas) |
 | Iniciar aplicação | [LOCAL_SETUP.md](./LOCAL_SETUP.md#-iniciar-aplicação) |
 | Acessar na rede | [LOCAL_SETUP.md](./LOCAL_SETUP.md#-acessar-na-rede-local) |
 | Resolver erros comuns | [LOCAL_SETUP.md](./LOCAL_SETUP.md#-problemas-comuns) |
-| Funcionalidades do frontend | [QUICK_START.md](./QUICK_START.md#-o-que-foi-implementado) |
-| Como funciona auth | [AUTHENTICATION.md](./apps/web/AUTHENTICATION.md) |
-| Deploy backend | [PRODUCTION.md](./PRODUCTION.md#%EF%B8%8F-backend-api-fastify) |
-| Deploy frontend | [PRODUCTION.md](./PRODUCTION.md#%EF%B8%8F-frontend-reactvite) |
+| Funcionalidades da interface | [QUICK_START.md](./QUICK_START.md#-o-que-foi-implementado) |
+| Como funciona a autenticação | [AUTHENTICATION.md](./apps/web/AUTHENTICATION.md) |
+| Implantar servidor | [PRODUCTION.md](./PRODUCTION.md#%EF%B8%8F-backend-api-fastify) |
+| Implantar interface | [PRODUCTION.md](./PRODUCTION.md#%EF%B8%8F-frontend-reactvite) |
 | Comparar custos | [HOSTING_COMPARISON.md](./HOSTING_COMPARISON.md#-cenários-de-custo) |
-| Gerar secrets | [scripts/README.md](./scripts/README.md#1-gerar-secrets) |
+| Gerar segredos | [scripts/README.md](./scripts/README.md#1-gerar-secrets) |
 | Arquitetura de segurança | [README.md](./README.md#-architecture-overview) |
 | Fluxos de criptografia | [README.md](./README.md#-encryption-lifecycle) |
 
@@ -156,8 +156,8 @@ zeroguard/
 
 | Categoria | Arquivos | Páginas (aprox) |
 |-----------|----------|-----------------|
-| Guias de Setup | 4 | ~50 |
-| Guias de Deploy | 3 | ~40 |
+| Guias de Configuração | 4 | ~50 |
+| Guias de Implantação | 3 | ~40 |
 | Documentação Técnica | 2 | ~30 |
 | Scripts e Ferramentas | 5 | ~10 |
 | **Total** | **14** | **~130** |
@@ -184,10 +184,10 @@ zeroguard/
 ### P: Onde hospedar?
 **R:** [HOSTING_COMPARISON.md](./HOSTING_COMPARISON.md#-recomendação-por-caso-de-uso)
 
-### P: Como gerar secrets de produção?
+### P: Como gerar segredos de produção?
 **R:** `.\scripts\generate-secrets.ps1`
 
-### P: Erros durante setup?
+### P: Erros durante configuração?
 **R:** [LOCAL_SETUP.md](./LOCAL_SETUP.md#-problemas-comuns)
 
 ### P: Como funciona a autenticação?
@@ -206,7 +206,7 @@ zeroguard/
 - ✅ Adicionado SETUP_CHECKLIST.md interativo
 - ✅ Adicionado START_HERE.md como ponto de entrada
 - ✅ Criado INDEX.md (este arquivo)
-- ✅ Adicionados scripts de verificação pré-deploy
+- ✅ Adicionados scripts de verificação pré-implantação
 
 ---
 
@@ -218,12 +218,12 @@ zeroguard/
 - [Git Downloads](https://git-scm.com/downloads)
 - [VS Code](https://code.visualstudio.com/)
 
-### Plataformas de Hosting
-- [Vercel](https://vercel.com) - Frontend
-- [Render](https://render.com) - Backend
-- [Railway](https://railway.app) - Backend + DB
-- [Supabase](https://supabase.com) - Database
-- [Neon](https://neon.tech) - Database
+### Plataformas de Hospedagem
+- [Vercel](https://vercel.com) - Interface
+- [Render](https://render.com) - Servidor
+- [Railway](https://railway.app) - Servidor + BD
+- [Supabase](https://supabase.com) - Banco de Dados
+- [Neon](https://neon.tech) - Banco de Dados
 
 ### Documentação de Tecnologias
 - [Fastify](https://www.fastify.io/docs/latest/)
@@ -238,7 +238,7 @@ zeroguard/
 
 1. **Use Ctrl+F** para buscar palavras-chave
 2. **Siga os links** entre documentos
-3. **Marque os checklists** conforme avança
+3. **Marque as listas** conforme avança
 4. **Consulte este índice** quando estiver perdido
 5. **Leia os comentários** no código
 

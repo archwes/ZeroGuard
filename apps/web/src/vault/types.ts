@@ -1,48 +1,48 @@
 /**
- * 🔐 Vault Item Types & Schemas
+ * 🔐 Tipos e Esquemas de Itens do Cofre
  * 
- * Type-safe definitions for all vault item types:
- * - Passwords (credentials)
- * - Payment cards
- * - Secure notes
- * - Identity documents
- * - Files
- * - TOTP secrets
- * - API keys
+ * Definições com segurança de tipo para todos os tipos de itens do cofre:
+ * - Senhas (credenciais)
+ * - Cartões de pagamento
+ * - Notas seguras
+ * - Documentos de identidade
+ * - Arquivos
+ * - Segredos TOTP
+ * - Chaves de API
  * 
- * All items are encrypted before storage.
- * These types represent the PLAINTEXT structure before encryption.
+ * Todos os itens são criptografados antes do armazenamento.
+ * Estes tipos representam a estrutura em TEXTO CLARO antes da criptografia.
  * 
  * @module vault/types
  */
 
 /**
- * Base vault item interface
+ * Interface base de item do cofre
  */
 export interface BaseVaultItem {
   id: string;                    // UUID
-  userId: string;                // Owner
+  userId: string;                // Proprietário
   createdAt: Date;
   updatedAt: Date;
   favorite: boolean;
   tags: string[];
-  notes?: string;                // Additional notes
-  customFields?: CustomField[];  // User-defined fields
+  notes?: string;                // Notas adicionais
+  customFields?: CustomField[];  // Campos definidos pelo usuário
 }
 
 /**
- * Custom field definition
+ * Definição de campo personalizado
  */
 export interface CustomField {
   id: string;
   label: string;
   value: string;
   type: 'text' | 'password' | 'email' | 'url' | 'tel';
-  hidden: boolean;  // Should value be masked?
+  hidden: boolean;  // Valor deve ser mascarado?
 }
 
 /**
- * Folder/Category for organization
+ * Pasta/Categoria para organização
  */
 export interface VaultFolder {
   id: string;

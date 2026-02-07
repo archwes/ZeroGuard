@@ -248,9 +248,9 @@ npm install
 
 **2. Ver Console por erros**
 
-**3. Comum: CORS error**
-- Backend `.env`: `CORS_ORIGIN="http://localhost:3000"`
-- Frontend `.env`: `VITE_API_URL=http://localhost:4000`
+**3. Comum: erro de CORS**
+- Servidor `.env`: `CORS_ORIGIN="http://localhost:3000"`
+- Interface `.env`: `VITE_API_URL=http://localhost:4000`
 - Reiniciar ambos
 
 ---
@@ -268,29 +268,29 @@ npm run prisma:generate
 ### Login não funciona (sempre erro)
 
 **Verificar:**
-1. Backend está rodando? (`http://localhost:4000/health`)
-2. Frontend aponta para backend correto? (ver `.env`)
-3. CORS configurado? (ver backend `.env`)
+1. Servidor está rodando? (`http://localhost:4000/health`)
+2. Interface aponta para servidor correto? (ver `.env`)
+3. CORS configurado? (ver servidor `.env`)
 4. Usuário foi criado? (testar registro primeiro)
 
 **Debug:**
 ```bash
-# Ver logs do backend
+# Ver logs do servidor
 cd apps/api
 npm run dev -- --log-level debug
 ```
 
 ---
 
-## 🚀 Deploy
+## 🚀 Implantação
 
 ### Quanto custa hospedar?
 
-| Plan | Custo/mês | Stack |
+| Plano | Custo/mês | Stack |
 |------|-----------|-------|
-| **Grátis** | $0-1 | Vercel + Render Free + Supabase |
-| **Starter** | $8 | Vercel + Render Starter + Neon |
-| **Pro** | $50-70 | Vercel Pro + Railway + Neon Pro |
+| **Grátis** | $0-1 | Vercel + Render Gratuito + Supabase |
+| **Inicial** | $8 | Vercel + Render Inicial + Neon |
+| **Profissional** | $50-70 | Vercel Pro + Railway + Neon Pro |
 
 **Detalhes:** [HOSTING_COMPARISON.md - Cenários de Custo](./HOSTING_COMPARISON.md#-cenários-de-custo)
 
@@ -299,39 +299,39 @@ npm run dev -- --log-level debug
 ### Onde hospedar?
 
 **Para começar (grátis):**
-- Frontend: Vercel
-- Backend: Render Free
-- Database: Supabase
+- Interface: Vercel
+- Servidor: Render Gratuito
+- Banco de Dados: Supabase
 
 **Para produção:**
-- Frontend: Vercel ou Cloudflare Pages
-- Backend: Render Starter ou Railway
-- Database: Neon ou Supabase Pro
+- Interface: Vercel ou Cloudflare Pages
+- Servidor: Render Inicial ou Railway
+- Banco de Dados: Neon ou Supabase Pro
 
 **Comparação completa:** [HOSTING_COMPARISON.md](./HOSTING_COMPARISON.md)
 
 ---
 
-### Como fazer deploy?
+### Como fazer implantação?
 
 **1. Preparação:**
 ```powershell
-.\scripts\generate-secrets.ps1            # Gerar secrets
+.\scripts\generate-secrets.ps1            # Gerar segredos
 .\scripts\pre-deploy-check.ps1            # Verificar tudo
 ```
 
-**2. Deploy:**
-- **Backend:** Conectar GitHub no Render
-- **Frontend:** `vercel --prod` ou conectar GitHub
+**2. Implantação:**
+- **Servidor:** Conectar GitHub no Render
+- **Interface:** `vercel --prod` ou conectar GitHub
 
 **Guia completo:** [PRODUCTION.md](./PRODUCTION.md)
-**Checklist:** [DEPLOY_CHECKLIST.md](./DEPLOY_CHECKLIST.md)
+**Lista de verificação:** [DEPLOY_CHECKLIST.md](./DEPLOY_CHECKLIST.md)
 
 ---
 
 ## 🔧 Desenvolvimento
 
-### Como adicionar uma nova rota no backend?
+### Como adicionar uma nova rota no servidor?
 
 ```typescript
 // apps/api/src/routes/exemplo.ts
@@ -350,7 +350,7 @@ app.register(exemploRoutes, { prefix: '/api' });
 
 ---
 
-### Como adicionar uma nova página no frontend?
+### Como adicionar uma nova página na interface?
 
 ```tsx
 // apps/web/src/pages/NovaPage.tsx
@@ -401,10 +401,10 @@ npm run prisma:migrate:dev --name adicionar_minha_tabela
 **Atualmente:** NÃO! Este é um projeto de desenvolvimento.
 
 **Para produção, você precisa:**
-- ✅ Trocar secrets de desenvolvimento
+- ✅ Trocar segredos de desenvolvimento
 - ✅ Configurar HTTPS
-- ✅ Ativar rate limiting
-- ✅ Implementar logging
+- ✅ Ativar limitação de taxa
+- ✅ Implementar registro
 - ✅ Configurar backups
 - ✅ Usar variáveis de ambiente seguras
 
@@ -429,14 +429,14 @@ Atualmente usa mock com localStorage.
 
 ### Os dados são criptografados?
 
-**Frontend atual:** Não (mock).
+**Interface atual:** Não (mock).
 
 **Arquitetura planejada:** Sim!
-- Criptografia client-side (AES-256-GCM)
+- Criptografia do lado do cliente (AES-256-GCM)
 - Derivação de chaves com Argon2id
-- Zero-knowledge (servidor nunca vê dados)
+- Conhecimento zero (servidor nunca vê dados)
 
-**Detalhes:** [README.md - Encryption Lifecycle](./README.md#-encryption-lifecycle)
+**Detalhes:** [README.md - Ciclo de Vida da Criptografia](./README.md#-encryption-lifecycle)
 
 ---
 
@@ -448,9 +448,9 @@ Atualmente usa mock com localStorage.
 
 | Objetivo | Documentação |
 |----------|--------------|
-| Setup inicial | [LOCAL_SETUP.md](./LOCAL_SETUP.md) |
+| Configuração inicial | [LOCAL_SETUP.md](./LOCAL_SETUP.md) |
 | Comandos rápidos | [QUICK_START.md](./QUICK_START.md) |
-| Deploy | [PRODUCTION.md](./PRODUCTION.md) |
+| Implantação | [PRODUCTION.md](./PRODUCTION.md) |
 | Entender arquitetura | [README.md](./README.md) |
 | Navegação rápida | [START_HERE.md](./START_HERE.md) |
 | Índice completo | [INDEX.md](./INDEX.md) |
@@ -459,8 +459,8 @@ Atualmente usa mock com localStorage.
 
 ### Onde encontro exemplos de código?
 
-- **Backend:** `apps/api/src/routes/`
-- **Frontend:** `apps/web/src/pages/`
+- **Servidor:** `apps/api/src/routes/`
+- **Interface:** `apps/web/src/pages/`
 - **Componentes:** `apps/web/src/components/`
 - **Hooks:** `apps/web/src/hooks/`
 
@@ -494,30 +494,30 @@ Leia os comentários no código!
 
 1. **Buscar neste FAQ** (Ctrl+F)
 2. **Consultar guias:**
-   - [LOCAL_SETUP.md](./LOCAL_SETUP.md) - Problemas de setup
-   - [PRODUCTION.md](./PRODUCTION.md) - Problemas de deploy
+   - [LOCAL_SETUP.md](./LOCAL_SETUP.md) - Problemas de configuração
+   - [PRODUCTION.md](./PRODUCTION.md) - Problemas de implantação
 3. **Ver logs dos servidores** (terminal)
-4. **Abrir DevTools** (F12) e ver Console
+4. **Abrir Ferramentas do Desenvolvedor** (F12) e ver Console
 5. **Ler comentários no código**
 
 ---
 
 ### Logs úteis
 
-**Backend:**
+**Servidor:**
 ```bash
 cd apps/api
 npm run dev -- --log-level debug
 ```
 
-**Database:**
+**Banco de Dados:**
 ```bash
 cd apps/api
 npm run prisma:studio
 ```
 
-**Frontend:**
-- Abrir DevTools (F12)
+**Interface:**
+- Abrir Ferramentas do Desenvolvedor (F12)
 - Aba "Console"
 - Aba "Network" (para ver requisições)
 

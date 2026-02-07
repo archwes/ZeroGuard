@@ -1,6 +1,6 @@
-# ✅ Checklist de Setup Local
+# ✅ Lista de Verificação de Configuração Local
 
-Use este checklist para acompanhar seu progresso no setup do ZeroGuard.
+Use esta lista de verificação para acompanhar seu progresso na configuração do ZeroGuard.
 
 ## 📋 Pré-requisitos
 
@@ -34,7 +34,7 @@ Use este checklist para acompanhar seu progresso no setup do ZeroGuard.
   sudo systemctl status postgresql
   ```
 
-- [ ] Database `zeroguard_dev` criada
+- [ ] Banco de dados `zeroguard_dev` criado
   ```bash
   psql -U postgres -c "\l" | grep zeroguard_dev
   ```
@@ -60,7 +60,7 @@ Use este checklist para acompanhar seu progresso no setup do ZeroGuard.
 
 ## ⚙️ Configuração
 
-### Backend (apps/api)
+### Servidor (apps/api)
 
 - [ ] Arquivo `.env` criado
   ```bash
@@ -74,7 +74,7 @@ Use este checklist para acompanhar seu progresso no setup do ZeroGuard.
 
 - [ ] Outras variáveis preenchidas
 
-### Frontend (apps/web)
+### Interface (apps/web)
 
 - [ ] Arquivo `.env` criado
   ```bash
@@ -93,12 +93,12 @@ Use este checklist para acompanhar seu progresso no setup do ZeroGuard.
   npm install
   ```
 
-- [ ] Dependências do backend instaladas
+- [ ] Dependências do servidor instaladas
   ```bash
   cd apps/api && npm install
   ```
 
-- [ ] Dependências do frontend instaladas
+- [ ] Dependências da interface instaladas
   ```bash
   cd apps/web && npm install
   ```
@@ -110,7 +110,7 @@ Use este checklist para acompanhar seu progresso no setup do ZeroGuard.
 
 ---
 
-## 🗃️ Database Setup
+## 🗃️ Configuração do Banco de Dados
 
 - [ ] Prisma client gerado
   ```bash
@@ -118,7 +118,7 @@ Use este checklist para acompanhar seu progresso no setup do ZeroGuard.
   npm run prisma:generate
   ```
 
-- [ ] Migrations executadas
+- [ ] Migrações executadas
   ```bash
   npm run prisma:migrate:dev
   ```
@@ -137,14 +137,14 @@ Use este checklist para acompanhar seu progresso no setup do ZeroGuard.
 
 ## 🚀 Execução
 
-- [ ] Backend iniciado
+- [ ] Servidor iniciado
   ```bash
   cd apps/api
   npm run dev
   ```
   **Esperado:** `Server listening on http://localhost:4000`
 
-- [ ] Frontend iniciado (nova janela/terminal)
+- [ ] Interface iniciada (nova janela/terminal)
   ```bash
   cd apps/web
   npm run dev
@@ -155,15 +155,15 @@ Use este checklist para acompanhar seu progresso no setup do ZeroGuard.
 
 ## ✅ Testes
 
-### Health Check
+### Verificação de Saúde
 
-- [ ] Backend respondendo
+- [ ] Servidor respondendo
   ```bash
   curl http://localhost:4000/health
   ```
   **Esperado:** `{"status":"ok",...}`
 
-### Frontend
+### Interface
 
 - [ ] Página abre no navegador
   - [ ] Background com partículas visível
@@ -206,9 +206,9 @@ Use este checklist para acompanhar seu progresso no setup do ZeroGuard.
   ```
   **Meu IP:** `________________`
 
-- [ ] Backend `.env` tem `HOST=0.0.0.0`
+- [ ] Servidor `.env` tem `HOST=0.0.0.0`
 
-- [ ] Frontend `.env` atualizado com IP
+- [ ] Interface `.env` atualizada com IP
   ```env
   VITE_API_URL=http://SEU_IP:4000
   ```
@@ -224,7 +224,7 @@ Use este checklist para acompanhar seu progresso no setup do ZeroGuard.
 
 ---
 
-## 🎉 Setup Completo!
+## 🎉 Configuração Completa!
 
 Se todas as caixas estão marcadas, parabéns! 🎊
 
@@ -244,7 +244,7 @@ Se algo não funcionou:
 
 1. 📖 Consulte [LOCAL_SETUP.md](./LOCAL_SETUP.md) seção "Problemas Comuns"
 2. 🔍 Verifique logs no terminal
-3. 🐛 Abra DevTools (F12) e veja Console
+3. 🐛 Abra Ferramentas do Desenvolvedor (F12) e veja Console
 4. 🔄 Tente reiniciar servidores
 
 ### Reset Rápido

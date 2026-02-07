@@ -1,386 +1,386 @@
-# 🗺️ ROADMAP & FUTURE FEATURES
+# 🗺️ ROTEIRO & RECURSOS FUTUROS
 
-## Current Version: 1.0.0 (MVP)
+## Versão Atual: 1.0.0 (MVP)
 
-### ✅ Implemented Features
+### ✅ Recursos Implementados
 
-**Core Security**:
-- ✅ Zero-knowledge client-side encryption
-- ✅ AES-256-GCM authenticated encryption
-- ✅ Argon2id key derivation
-- ✅ SRP authentication protocol
-- ✅ Multi-factor authentication (TOTP)
-- ✅ Backup codes
+**Segurança Central**:
+- ✅ Criptografia de conhecimento zero no cliente
+- ✅ Criptografia autenticada AES-256-GCM
+- ✅ Derivação de chaves Argon2id
+- ✅ Protocolo de autenticação SRP
+- ✅ Autenticaç ão multifator (TOTP)
+- ✅ Códigos de backup
 
-**Vault Types**:
-- ✅ Password manager
-- ✅ Payment card vault
-- ✅ Secure notes
-- ✅ Identity documents
-- ✅ File storage (encrypted)
-- ✅ TOTP authenticator
-- ✅ API keys
-- ✅ License keys
+**Tipos de Cofre**:
+- ✅ Gerenciador de senhas
+- ✅ Cofre de cartões de pagamento
+- ✅ Notas seguras
+- ✅ Documentos de identidade
+- ✅ Armazenamento de arquivos (criptografado)
+- ✅ Autenticador TOTP
+- ✅ Chaves de API
+- ✅ Chaves de licença
 
-**User Experience**:
-- ✅ Password strength checker
-- ✅ Secure password generator
-- ✅ Breach detection (HIBP integration)
-- ✅ Security dashboard
-- ✅ Audit log
-- ✅ Session management
+**Experiência do Usuário**:
+- ✅ Verificador de força de senha
+- ✅ Gerador seguro de senhas
+- ✅ Detecção de vazamentos (integração HIBP)
+- ✅ Painel de segurança
+- ✅ Log de auditoria
+- ✅ Gerenciamento de sessões
 
-**Infrastructure**:
-- ✅ RESTful API
-- ✅ PostgreSQL database
-- ✅ Redis caching
-- ✅ Rate limiting
-- ✅ Comprehensive logging
-
----
-
-## Version 1.1.0 - Q2 2026 (Enhanced UX)
-
-### 🎯 Goals
-- Improve user experience
-- Add browser integration
-- Enhanced search
-
-### Features
-
-**Browser Extension**:
-- [ ] Chrome extension
-- [ ] Firefox extension
-- [ ] Auto-fill credentials
-- [ ] Context menu integration
-- [ ] One-click password generator
-
-**Search & Organization**:
-- [ ] Full-text search (encrypted metadata)
-- [ ] Folder organization
-- [ ] Tags and categories
-- [ ] Favorites/pinned items
-- [ ] Recently used items
-
-**Import/Export**:
-- [ ] Import from 1Password
-- [ ] Import from Bitwarden
-- [ ] Import from LastPass
-- [ ] Import from KeePass
-- [ ] CSV import/export
-
-**Enhanced Security**:
-- [ ] Password health monitoring
-- [ ] Automatic breach monitoring
-- [ ] Security score improvements
-- [ ] Dark web monitoring
+**Infraestrutura**:
+- ✅ API RESTful
+- ✅ Banco de dados PostgreSQL
+- ✅ Cache Redis
+- ✅ Limitação de taxa
+- ✅ Registro abrangente
 
 ---
 
-## Version 1.2.0 - Q3 2026 (Collaboration)
+## Versão 1.1.0 - T2 2026 (UX Melhorada)
 
-### 🎯 Goals
-- Enable secure sharing
-- Team/family plans
-- Enterprise features
+### 🎯 Objetivos
+- Melhorar experiência do usuário
+- Adicionar integração com navegador
+- Busca aprimorada
 
-### Features
+### Recursos
 
-**Sharing & Collaboration**:
-- [ ] Secure item sharing
-- [ ] Shared folders
-- [ ] Granular permissions (view/edit/share)
-- [ ] Share expiration
-- [ ] Share revocation
+**Extensão para Navegador**:
+- [ ] Extensão Chrome
+- [ ] Extensão Firefox
+- [ ] Preenchimento automático de credenciais
+- [ ] Integração com menu de contexto
+- [ ] Gerador de senha com um clique
 
-**Team Features**:
-- [ ] Team vaults
-- [ ] Role-based access control (RBAC)
-- [ ] Admin dashboard
-- [ ] User management
-- [ ] Activity monitoring
+**Busca & Organização**:
+- [ ] Busca de texto completo (metadados criptografados)
+- [ ] Organização por pastas
+- [ ] Tags e categorias
+- [ ] Itens favoritos/fixados
+- [ ] Itens usados recentemente
 
-**Family Plans**:
-- [ ] Family vault sharing
-- [ ] Kids accounts (restricted)
-- [ ] Emergency access improvements
-- [ ] Family admin controls
+**Importar/Exportar**:
+- [ ] Importar do 1Password
+- [ ] Importar do Bitwarden
+- [ ] Importar do LastPass
+- [ ] Importar do KeePass
+- [ ] Importar/exportar CSV
 
-**Enterprise**:
-- [ ] SAML/SSO integration
-- [ ] Active Directory sync
-- [ ] Custom branding
-- [ ] Advanced reporting
-- [ ] Compliance exports (SOC 2, ISO 27001)
-
----
-
-## Version 1.3.0 - Q4 2026 (Advanced Features)
-
-### 🎯 Goals
-- AI-powered features
-- Advanced security
-- Mobile apps
-
-### Features
-
-**AI Security Advisor**:
-- [ ] Intelligent password suggestions
-- [ ] Risk analysis
-- [ ] Anomaly detection
-- [ ] Security recommendations
-- [ ] Breach prediction
-
-**Mobile Applications**:
-- [ ] iOS app (native)
-- [ ] Android app (native)
-- [ ] Biometric unlock (Face ID, Touch ID)
-- [ ] Mobile auto-fill
-- [ ] Offline mode
-
-**Advanced Security**:
-- [ ] Hardware key support (YubiKey, FIDO2)
-- [ ] WebAuthn passwordless login
-- [ ] Biometric authentication
-- [ ] Trusted device management
-- [ ] Geographic restrictions
-
-**Travel Mode**:
-- [ ] Temporarily hide sensitive items
-- [ ] Border crossing protection
-- [ ] One-click enable/disable
-- [ ] Auto-restore on return
+**Segurança Aprimorada**:
+- [ ] Monitoramento de saúde de senhas
+- [ ] Monitoramento automático de vazamentos
+- [ ] Melhorias na pontuação de segurança
+- [ ] Monitoramento da dark web
 
 ---
 
-## Version 2.0.0 - 2027 (Privacy & Decentralization)
+## Versão 1.2.0 - T3 2026 (Colaboração)
 
-### 🎯 Goals
-- Self-hosting options
-- End-to-end encrypted sync
-- Blockchain integration (optional)
+### 🎯 Objetivos
+- Habilitar compartilhamento seguro
+- Planos para equipes/famílias
+- Recursos empresariais
 
-### Features
+### Recursos
 
-**Self-Hosting**:
-- [ ] Docker Compose deployment
-- [ ] Kubernetes Helm charts
-- [ ] One-click cloud deployment (DigitalOcean, AWS)
-- [ ] Automatic updates
-- [ ] Backup automation
+**Compartilhamento & Colaboração**:
+- [ ] Compartilhamento seguro de itens
+- [ ] Pastas compartilhadas
+- [ ] Permissões granulares (visualizar/editar/compartilhar)
+- [ ] Expiração de compartilhamento
+- [ ] Revogação de compartilhamento
 
-**Decentralized Options**:
-- [ ] Peer-to-peer sync (optional)
-- [ ] IPFS integration for file storage
-- [ ] Blockchain-based recovery (optional)
-- [ ] Multi-device sync without central server
+**Recursos para Equipes**:
+- [ ] Cofres de equipe
+- [ ] Controle de acesso baseado em função (RBAC)
+- [ ] Painel de administração
+- [ ] Gerenciamento de usuários
+- [ ] Monitoramento de atividades
 
-**Digital Inheritance**:
-- [ ] Dead man's switch
-- [ ] Trusted executors
-- [ ] Time-locked access
-- [ ] Legal documentation integration
-- [ ] Automated will integration
+**Planos Familiares**:
+- [ ] Compartilhamento de cofre familiar
+- [ ] Contas para crianças (restritas)
+- [ ] Melhorias no acesso de emergência
+- [ ] Controles de administração familiar
 
-**Advanced Features**:
-- [ ] Email alias generator
-- [ ] Virtual credit cards (integration)
-- [ ] Passwordless authentication
-- [ ] Quantum-resistant encryption (future-proofing)
+**Empresarial**:
+- [ ] Integração SAML/SSO
+- [ ] Sincronização com Active Directory
+- [ ] Marca customizada
+- [ ] Relatórios avançados
+- [ ] Exportações de conformidade (SOC 2, ISO 27001)
 
 ---
 
-## Version 2.1.0+ - 2027+ (Innovation)
+## Versão 1.3.0 - T4 2026 (Recursos Avançados)
 
-### Potential Features (Not Committed)
+### 🎯 Objetivos
+- Recursos baseados em IA
+- Segurança avançada
+- Aplicativos móveis
 
-**Zero-Trust Architecture**:
-- [ ] Per-item access policies
-- [ ] Context-aware authentication
-- [ ] Continuous verification
-- [ ] Behavioral biometrics
+### Recursos
 
-**Advanced Privacy**:
-- [ ] Tor integration
-- [ ] Onion routing
-- [ ] Anonymous accounts (cryptocurrency payment)
-- [ ] Metadata minimization
+**Assistente de Segurança com IA**:
+- [ ] Sugestões inteligentes de senhas
+- [ ] Análise de risco
+- [ ] Detecção de anomalias
+- [ ] Recomendações de segurança
+- [ ] Previsão de vazamentos
 
-**Developer Features**:
-- [ ] CLI tool
-- [ ] Public API
-- [ ] SDK for third-party apps
+**Aplicativos Móveis**:
+- [ ] Aplicativo iOS (nativo)
+- [ ] Aplicativo Android (nativo)
+- [ ] Desbloqueio biométrico (Face ID, Touch ID)
+- [ ] Preenchimento automático móvel
+- [ ] Modo offline
+
+**Segurança Avançada**:
+- [ ] Suporte a chaves de hardware (YubiKey, FIDO2)
+- [ ] Login sem senha WebAuthn
+- [ ] Autenticação biométrica
+- [ ] Gerenciamento de dispositivos confiáveis
+- [ ] Restrições geográficas
+
+**Modo Viagem**:
+- [ ] Ocultar temporariamente itens sensíveis
+- [ ] Proteção para cruzamento de fronteiras
+- [ ] Habilitar/desabilitar com um clique
+- [ ] Restauração automática no retorno
+
+---
+
+## Versão 2.0.0 - 2027 (Privacidade & Descentralização)
+
+### 🎯 Objetivos
+- Opções de auto-hospedagem
+- Sincronização criptografada de ponta a ponta
+- Integração blockchain (opcional)
+
+### Recursos
+
+**Auto-hospedagem**:
+- [ ] Implantação com Docker Compose
+- [ ] Gráficos Helm para Kubernetes
+- [ ] Implantação na nuvem com um clique (DigitalOcean, AWS)
+- [ ] Atualizações automáticas
+- [ ] Automação de backup
+
+**Opções Descentralizadas**:
+- [ ] Sincronização ponto a ponto (opcional)
+- [ ] Integração IPFS para armazenamento de arquivos
+- [ ] Recuperação baseada em blockchain (opcional)
+- [ ] Sincronização multi-dispositivo sem servidor central
+
+**Herança Digital**:
+- [ ] Interruptor de homem morto
+- [ ] Executores confiáveis
+- [ ] Acesso com bloqueio temporal
+- [ ] Integração com documentação legal
+- [ ] Integração automatizada de testamento
+
+**Recursos Avançados**:
+- [ ] Gerador de alias de email
+- [ ] Cartões de crédito virtuais (integração)
+- [ ] Autenticação sem senha
+- [ ] Criptografia resistente a computação quântica (à prova de futuro)
+
+---
+
+## Versão 2.1.0+ - 2027+ (Inovação)
+
+### Recursos Potenciais (Não Comprometidos)
+
+**Arquitetura de Confiança Zero**:
+- [ ] Políticas de acesso por item
+- [ ] Autenticação sensível ao contexto
+- [ ] Verificação contínua
+- [ ] Biometria comportamental
+
+**Privacidade Avançada**:
+- [ ] Integração Tor
+- [ ] Roteamento onion
+- [ ] Contas anônimas (pagamento em criptomoeda)
+- [ ] Minimização de metadados
+
+**Recursos para Desenvolvedores**:
+- [ ] Ferramenta CLI
+- [ ] API pública
+- [ ] SDK para aplicativos de terceiros
 - [ ] Webhooks
-- [ ] Terraform provider
+- [ ] Provedor Terraform
 
-**Integrations**:
-- [ ] Password manager API (browser integration)
+**Integrações**:
+- [ ] API de gerenciador de senhas (integração com navegador)
 - [ ] IFTTT/Zapier
-- [ ] Slack/Discord notifications
-- [ ] GitHub/GitLab secrets management
-- [ ] Cloud provider integration (AWS Secrets Manager)
+- [ ] Notificações Slack/Discord
+- [ ] Gerenciamento de segredos GitHub/GitLab
+- [ ] Integração com provedores de nuvem (AWS Secrets Manager)
 
-**AI & ML**:
-- [ ] Password pattern recognition
-- [ ] Phishing detection
-- [ ] Threat intelligence integration
-- [ ] Predictive security warnings
-- [ ] Natural language vault search
-
----
-
-## Research & Exploration
-
-**Post-Quantum Cryptography**:
-- CRYSTALS-Kyber (key encapsulation)
-- CRYSTALS-Dilithium (signatures)
-- SPHINCS+ (stateless signatures)
-- Migration path from current crypto
-
-**Homomorphic Encryption**:
-- Server-side operations on encrypted data
-- Search without decryption
-- Computation without key access
-
-**Secure Multi-Party Computation**:
-- Shared secrets without trust
-- Distributed key generation
-- Threshold cryptography
-
-**Zero-Knowledge Proofs**:
-- Prove password strength without revealing password
-- Identity verification without disclosure
-- Compliance without data access
+**IA & ML**:
+- [ ] Reconhecimento de padrões de senha
+- [ ] Detecção de phishing
+- [ ] Integração de inteligência de ameaças
+- [ ] Avisos de segurança preditivos
+- [ ] Busca no cofre em linguagem natural
 
 ---
 
-## Community Features
+## Pesquisa & Exploração
 
-**Open Source**:
-- [ ] Open source client (web, mobile, extensions)
-- [ ] Cryptography audit bounties
-- [ ] Community-driven roadmap
-- [ ] Transparent development
+**Criptografia Pós-Quântica**:
+- CRYSTALS-Kyber (encapsulamento de chaves)
+- CRYSTALS-Dilithium (assinaturas)
+- SPHINCS+ (assinaturas sem estado)
+- Caminho de migração da criptografia atual
 
-**Bug Bounty Program**:
-- Launch date: Q3 2026
-- Platform: HackerOne
-- Rewards: $100 - $10,000+
-- Scope: All ZeroGuard services
+**Criptografia Homomórfica**:
+- Operações no servidor em dados criptografados
+- Busca sem descriptografia
+- Computação sem acesso a chaves
 
-**Documentation**:
-- [ ] Video tutorials
-- [ ] Interactive demos
-- [ ] Security whitepaper
-- [ ] Cryptography deep-dive
-- [ ] Implementation guides
+**Computação Multipartidária Segura**:
+- Segredos compartilhados sem confiança
+- Geração de chaves distribuída
+- Criptografia de limiar
 
----
-
-## Performance Goals
-
-| Metric | Current | Target (v2.0) |
-|--------|---------|---------------|
-| **Key Derivation** | ~300ms | ~200ms |
-| **Item Encryption** | ~5ms | ~3ms |
-| **Vault Unlock** | ~500ms | ~300ms |
-| **Search Latency** | N/A | <100ms |
-| **Sync Time (1000 items)** | N/A | <5s |
-| **App Load Time** | ~1s | <500ms |
+**Provas de Conhecimento Zero**:
+- Provar força de senha sem revelar senha
+- Verificação de identidade sem divulgação
+- Conformidade sem acesso a dados
 
 ---
 
-## Security Goals
+## Recursos da Comunidade
 
-| Goal | Current | Target |
-|------|---------|--------|
-| **Security Score** | A | A+ |
-| **Bug Bounty** | Not launched | Active |
-| **External Audits** | 0 | Annual |
-| **Compliance** | None | SOC 2, ISO 27001 |
-| **Uptime** | 99% | 99.9% |
+**Código Aberto**:
+- [ ] Cliente código aberto (web, móvel, extensões)
+- [ ] Recompensas por auditoria de criptografia
+- [ ] Roteiro impulsionado pela comunidade
+- [ ] Desenvolvimento transparente
+
+**Programa de Recompensa por Bugs**:
+- Data de lançamento: T3 2026
+- Plataforma: HackerOne
+- Recompensas: $100 - $10.000+
+- Escopo: Todos os serviços ZeroGuard
+
+**Documentação**:
+- [ ] Tutoriais em vídeo
+- [ ] Demonstrações interativas
+- [ ] Whitepaper de segurança
+- [ ] Mergulho profundo em criptografia
+- [ ] Guias de implementação
 
 ---
 
-## Scaling Goals
+## Metas de Desempenho
 
-| Metric | MVP | Year 1 | Year 3 | Year 5 |
-|--------|-----|--------|--------|--------|
-| **Users** | 1K | 100K | 1M | 10M |
-| **Vault Items** | 10K | 5M | 500M | 5B |
-| **API Requests/day** | 100K | 10M | 1B | 10B |
-| **Storage** | 100GB | 10TB | 1PB | 10PB |
-| **Regions** | 1 | 3 | 6 | 12 |
+| Métrica | Atual | Meta (v2.0) |
+|---------|-------|-------------|
+| **Derivação de Chave** | ~300ms | ~200ms |
+| **Criptografia de Item** | ~5ms | ~3ms |
+| **Desbloqueio do Cofre** | ~500ms | ~300ms |
+| **Latência de Busca** | N/A | <100ms |
+| **Tempo de Sinc (1000 itens)** | N/A | <5s |
+| **Tempo de Carregamento** | ~1s | <500ms |
 
 ---
 
-## Research Partnerships
+## Metas de Segurança
+
+| Meta | Atual | Alvo |
+|------|-------|------|
+| **Pontuação de Segurança** | A | A+ |
+| **Recompensa por Bugs** | Não lançado | Ativo |
+| **Auditorias Externas** | 0 | Anual |
+| **Conformidade** | Nenhuma | SOC 2, ISO 27001 |
+| **Tempo de Atividade** | 99% | 99.9% |
+
+---
+
+## Metas de Escalabilidade
+
+| Métrica | MVP | Ano 1 | Ano 3 | Ano 5 |
+|---------|-----|-------|-------|-------|
+| **Usuários** | 1K | 100K | 1M | 10M |
+| **Itens do Cofre** | 10K | 5M | 500M | 5B |
+| **Requisições API/dia** | 100K | 10M | 1B | 10B |
+| **Armazenamento** | 100GB | 10TB | 1PB | 10PB |
+| **Regiões** | 1 | 3 | 6 | 12 |
+
+---
+
+## Parcerias de Pesquisa
 
 **Academia**:
-- Stanford Cryptography Lab
+- Laboratório de Criptografia de Stanford
 - MIT CSAIL
 - CMU CyLab
 
-**Industry**:
-- NIST (cryptography standards)
-- OWASP (web security)
+**Indústria**:
+- NIST (padrões de criptografia)
+- OWASP (segurança web)
 - Cloud Security Alliance
 
 ---
 
-## Open Questions
+## Questões Abertas
 
-1. **Should we support password-less authentication only?**
-   - Pro: Eliminates master password risk
-   - Con: Requires hardware key, less accessible
+1. **Devemos suportar apenas autenticação sem senha?**
+   - Pró: Elimina risco de senha mestra
+   - Contra: Requer chave de hardware, menos acessível
 
-2. **Self-hosting vs Cloud-only?**
-   - Pro: Privacy-conscious users prefer self-hosting
-   - Con: Support burden, security risks
+2. **Auto-hospedagem vs Apenas nuvem?**
+   - Pró: Usuários conscientes da privacidade preferem auto-hospedagem
+   - Contra: Carga de suporte, riscos de segurança
 
-3. **Freemium vs Paid-only?**
-   - Pro: Free tier drives adoption
-   - Con: Abuse, support costs
+3. **Freemium vs Apenas pago?**
+   - Pró: Plano gratuito impulsiona adoção
+   - Contra: Abuso, custos de suporte
 
-4. **Blockchain for recovery?**
-   - Pro: Decentralized, censorship-resistant
-   - Con: Complexity, user experience, gas fees
+4. **Blockchain para recuperação?**
+   - Pró: Descentralizado, resistente à censura
+   - Contra: Complexidade, experiência do usuário, taxas de gas
 
-5. **Open source everything?**
-   - Pro: Transparency, community trust
-   - Con: Easier for attackers to find vulnerabilities
+5. **Tudo código aberto?**
+   - Pró: Transparência, confiança da comunidade
+   - Contra: Mais fácil para atacantes encontrarem vulnerabilidades
 
 ---
 
-## Feedback Channels
+## Canais de Feedback
 
-**Public**:
-- GitHub Issues: feature requests
+**Público**:
+- GitHub Issues: solicitações de recursos
 - Reddit: r/ZeroGuard
 - Twitter: @ZeroGuardApp
-- Discord: ZeroGuard Community
+- Discord: Comunidade ZeroGuard
 
-**Private**:
+**Privado**:
 - Email: feedback@zeroguard.io
-- Security: security@zeroguard.io
-- Support: support@zeroguard.io
+- Segurança: security@zeroguard.io
+- Suporte: support@zeroguard.io
 
 ---
 
-## Contributing
+## Contribuindo
 
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md).
+Recebemos contribuições! Veja [CONTRIBUTING.md](CONTRIBUTING.md).
 
-**Areas We Need Help**:
-- Security audits
-- Documentation
-- Internationalization (i18n)
-- Mobile app development
-- UI/UX design
-- Performance optimization
+**Áreas Onde Precisamos de Ajuda**:
+- Auditorias de segurança
+- Documentação
+- Internacionalização (i18n)
+- Desenvolvimento de aplicativo móvel
+- Design de UI/UX
+- Otimização de desempenho
 
 ---
 
-**Roadmap Version**: 1.0  
-**Last Updated**: 2026-02-07  
-**Next Review**: 2026-05-01
+**Versão do Roteiro**: 1.0  
+**Última Atualização**: 07/02/2026  
+**Próxima Revisão**: 01/05/2026

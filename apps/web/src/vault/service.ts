@@ -1,8 +1,8 @@
 /**
- * 🔐 Vault Service - Client-Side Vault Operations
+ * 🔐 Serviço de Cofre - Operações do Cofre no Cliente
  * 
- * Handles encryption, decryption, and management of vault items.
- * All cryptographic operations happen here before data leaves the client.
+ * Gerencia criptografia, descriptografia e gestão de itens do cofre.
+ * Todas as operações criptográficas acontecem aqui antes dos dados deixarem o cliente.
  * 
  * @module vault/service
  */
@@ -25,10 +25,10 @@ import type {
 } from './types';
 
 /**
- * Vault service class
+ * Classe de serviço de cofre
  * 
- * Manages vault items with client-side encryption.
- * Never exposes plaintext to network or storage.
+ * Gerencia itens do cofre com criptografia no cliente.
+ * Nunca expõe texto claro para rede ou armazenamento.
  */
 export class VaultService {
   private mek: SecureKey;
@@ -38,16 +38,16 @@ export class VaultService {
   }
 
   /**
-   * Encrypt a vault item for storage
+   * Criptografar um item do cofre para armazenamento
    * 
-   * Process:
-   * 1. Serialize item to JSON
-   * 2. Generate random item key
-   * 3. Encrypt item with item key (AES-256-GCM)
-   * 4. Wrap item key with MEK
-   * 5. Encrypt metadata separately
+   * Processo:
+   * 1. Serializar item para JSON
+   * 2. Gerar chave aleatória do item
+   * 3. Criptografar item com chave do item (AES-256-GCM)
+   * 4. Envolver chave do item com MEK
+   * 5. Criptografar metadados separadamente
    * 
-   * @param item - Plaintext vault item
+   * @param item - Item do cofre em texto claro
    * @returns Encrypted item ready for transmission
    */
   encryptItem(item: VaultItem): EncryptedVaultItemDTO {

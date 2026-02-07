@@ -1,10 +1,10 @@
-# 🏢 Comparação de Plataformas de Hosting
+# 🏢 Comparação de Plataformas de Hospedagem
 
-## Frontend Hosting
+## Hospedagem de Interface
 
 ### Comparação Rápida
 
-| Plataforma | Free Tier | Build/mês | CDN | Deploy | Edge | Recomendação |
+| Plataforma | Plano Gratuito | Build/mês | CDN | Implantação | Edge | Recomendação |
 |------------|-----------|-----------|-----|--------|------|--------------|
 | **Vercel** | ✅ Ilimitado | 6,000 min | ✅ Global | Git push | ✅ | ⭐⭐⭐⭐⭐ |
 | **Netlify** | ✅ 300 min | 300 min | ✅ Global | Git push | ✅ | ⭐⭐⭐⭐ |
@@ -17,18 +17,18 @@
 **Melhor para:** React, Next.js, Vite
 
 **Pros:**
-- ✅ Deploy automático no push
-- ✅ Preview deployments para PRs
-- ✅ Edge functions gratuitas
+- ✅ Implantação automática no push
+- ✅ Implantações de preview para PRs
+- ✅ Funções edge gratuitas
 - ✅ Analytics incluído
-- ✅ Excelente DX
+- ✅ Excelente experiência de desenvolvimento
 
 **Cons:**
-- ⚠️ Limite de bandwidth (100GB/mês free)
-- ⚠️ Funções serverless têm timeout de 10s (free)
+- ⚠️ Limite de largura de banda (100GB/mês gratuito)
+- ⚠️ Funções serverless têm timeout de 10s (gratuito)
 
 **Preço:**
-- Free: $0/mês
+- Gratuito: $0/mês
 - Pro: $20/mês
 - Team: $40/mês
 
@@ -45,16 +45,16 @@ vercel --prod
 
 **Pros:**
 - ✅ CDN mais rápido do mundo
-- ✅ Unlimited bandwidth
-- ✅ DDoS protection gratuito
-- ✅ Web Analytics free
+- ✅ Largura de banda ilimitada
+- ✅ Proteção DDoS gratuita
+- ✅ Web Analytics gratuito
 
 **Cons:**
-- ⚠️ Build limit: 500/mês (free)
+- ⚠️ Limite de build: 500/mês (gratuito)
 - ⚠️ UI menos intuitivo
 
 **Preço:**
-- Free: $0/mês (sempre)
+- Gratuito: $0/mês (sempre)
 - Workers: $5/mês (opcional)
 
 **Setup:**
@@ -69,26 +69,26 @@ wrangler pages deploy apps/web/dist
 **Melhor para:** JAMstack
 
 **Pros:**
-- ✅ Forms handling gratuito
-- ✅ Identity/Auth built-in
-- ✅ Split testing A/B
+- ✅ Manipulação de formulários gratuita
+- ✅ Identity/Auth integrado
+- ✅ Teste split A/B
 
 **Cons:**
-- ⚠️ Build minutes limitados (300/mês)
-- ⚠️ Functions limitadas (125k/mês)
+- ⚠️ Minutos de build limitados (300/mês)
+- ⚠️ Funções limitadas (125k/mês)
 
 **Preço:**
-- Free: $0/mês
+- Gratuito: $0/mês
 - Pro: $19/mês
 - Team: $99/mês
 
 ---
 
-## Backend Hosting
+## Hospedagem de Servidor
 
 ### Comparação Rápida
 
-| Plataforma | Free | RAM | CPU | Storage | Database | Recomendação |
+| Plataforma | Gratuito | RAM | CPU | Armazenamento | Banco de Dados | Recomendação |
 |------------|------|-----|-----|---------|----------|--------------|
 | **Render** | 750h | 512MB | 0.5 | 1GB | Extra | ⭐⭐⭐⭐⭐ |
 | **Railway** | $5 | 8GB | 8 | 10GB | Incluído | ⭐⭐⭐⭐⭐ |
@@ -103,24 +103,24 @@ wrangler pages deploy apps/web/dist
 
 **Pros:**
 - ✅ 750 horas grátis (suficiente para 1 app)
-- ✅ Auto-deploy no Git push
-- ✅ Managed PostgreSQL
+- ✅ Implantação automática no Git push
+- ✅ PostgreSQL gerenciado
 - ✅ SSL gratuito
 - ✅ Zero configuração
 
 **Cons:**
-- ⚠️ Free tier tem cold start (spin down após 15 min)
-- ⚠️ Apenas 512MB RAM (free)
+- ⚠️ Plano gratuito tem cold start (desliga após 15 min)
+- ⚠️ Apenas 512MB RAM (gratuito)
 
 **Preço:**
-- Free: $0/mês (com limitações)
-- Starter: $7/mês (sempre ativo)
-- Standard: $25/mês (2GB RAM)
+- Gratuito: $0/mês (com limitações)
+- Inicial: $7/mês (sempre ativo)
+- Padrão: $25/mês (2GB RAM)
 
-**Database:**
-- Free: $0 (90 dias, depois $7/mês)
-- Starter: $7/mês (1GB)
-- Pro: $25/mês (10GB)
+**Banco de Dados:**
+- Gratuito: $0 (90 dias, depois $7/mês)
+- Inicial: $7/mês (1GB)
+- Profissional: $25/mês (10GB)
 
 **Setup:**
 ```yaml
@@ -139,18 +139,18 @@ services:
 **Melhor para:** Full-stack com database
 
 **Pros:**
-- ✅ Database PostgreSQL incluído
-- ✅ Excelente DX
+- ✅ Banco de dados PostgreSQL incluído
+- ✅ Excelente experiência de desenvolvimento
 - ✅ Volume persistente
-- ✅ Monitoring built-in
+- ✅ Monitoramento integrado
 - ✅ Sem cold start
 
 **Cons:**
-- ⚠️ Não tem free tier real (apenas $5 de crédito)
+- ⚠️ Não tem plano gratuito real (apenas $5 de crédito)
 - ⚠️ Cobra por uso (pode ser imprevisível)
 
 **Preço:**
-- Developer: $5 crédito/mês
+- Desenvolvedor: $5 crédito/mês
 - Hobby: $5-20/mês (típico)
 - Pro: $20-100/mês
 
@@ -164,22 +164,22 @@ railway up
 ---
 
 #### 🥈 Fly.io
-**Melhor para:** Global edge deployment
+**Melhor para:** Implantação global na borda
 
 **Pros:**
 - ✅ 3 VMs gratuitas (256MB cada)
-- ✅ Deploy em múltiplas regiões
+- ✅ Implantar em múltiplas regiões
 - ✅ Mais próximo dos usuários
 - ✅ IPv6 nativo
 
 **Cons:**
 - ⚠️ Configuração mais complexa (Dockerfile)
 - ⚠️ 256MB RAM (muito baixo)
-- ⚠️ Database não incluído
+- ⚠️ Banco de dados não incluído
 
 **Preço:**
-- Free: 3 VMs (256MB)
-- Paid: $1.94/VM/mês (256MB)
+- Gratuito: 3 VMs (256MB)
+- Pago: $1.94/VM/mês (256MB)
 
 **Setup:**
 ```bash
@@ -195,26 +195,26 @@ fly deploy
 **Pros:**
 - ✅ Controle completo (SSH, root)
 - ✅ Preço previsível
-- ✅ Managed databases bons
-- ✅ Object storage (Spaces)
+- ✅ Bancos de dados gerenciados bons
+- ✅ Armazenamento de objetos (Spaces)
 
 **Cons:**
-- ⚠️ Sem free tier
-- ⚠️ Requer mais setup manual
-- ⚠️ Sem deploy automático
+- ⚠️ Sem plano gratuito
+- ⚠️ Requer mais configuração manual
+- ⚠️ Sem implantação automática
 
 **Preço:**
 - Droplet: $6-12/mês
-- Managed DB: $15/mês
-- App Platform: $5/mês
+- Banco Gerenciado: $15/mês
+- Plataforma de App: $5/mês
 
 ---
 
-## Database Hosting
+## Hospedagem de Banco de Dados
 
 ### Comparação Rápida
 
-| Plataforma | Free | Storage | Bandwidth | Backups | Recomendação |
+| Plataforma | Gratuito | Armazenamento | Largura de Banda | Backups | Recomendação |
 |------------|------|---------|-----------|---------|--------------|
 | **Supabase** | ✅ | 500MB | 2GB | ❌ | ⭐⭐⭐⭐⭐ |
 | **Neon** | ✅ | 3GB | ∞ | ✅ | ⭐⭐⭐⭐⭐ |
@@ -223,25 +223,25 @@ fly deploy
 
 ### Detalhes
 
-#### 🥇 Supabase (Melhor Free Tier)
+#### 🥇 Supabase (Melhor Plano Gratuito)
 **PostgreSQL completo + Realtime + Auth**
 
 **Pros:**
-- ✅ 500MB storage grátis
-- ✅ 2GB bandwidth
-- ✅ Realtime subscriptions
-- ✅ Auth built-in
-- ✅ Storage de arquivos
+- ✅ 500MB armazenamento grátis
+- ✅ 2GB largura de banda
+- ✅ Subscrições em tempo real
+- ✅ Auth integrado
+- ✅ Armazenamento de arquivos
 - ✅ API REST automática
 
 **Cons:**
-- ⚠️ Sem backups automáticos (free)
+- ⚠️ Sem backups automáticos (gratuito)
 - ⚠️ Projeto pausa após 1 semana de inatividade
 
 **Preço:**
-- Free: $0/mês
-- Pro: $25/mês (8GB + backups)
-- Team: $599/mês
+- Gratuito: $0/mês
+- Profissional: $25/mês (8GB + backups)
+- Equipe: $599/mês
 
 ---
 
@@ -249,19 +249,19 @@ fly deploy
 **PostgreSQL serverless com autoscaling**
 
 **Pros:**
-- ✅ 3GB storage grátis
-- ✅ Unlimited bandwidth
+- ✅ 3GB armazenamento grátis
+- ✅ Largura de banda ilimitada
 - ✅ Backups automáticos
-- ✅ Branch database (staging)
-- ✅ Scale to zero
+- ✅ Ramificação de banco de dados (staging)
+- ✅ Escala para zero
 
 **Cons:**
-- ⚠️ Limita compute hours (100h/mês free)
+- ⚠️ Limita horas de computação (100h/mês gratuito)
 
 **Preço:**
-- Free: $0/mês
-- Pro: $19/mês
-- Scale: $69/mês
+- Gratuito: $0/mês
+- Profissional: $19/mês
+- Escalado: $69/mês
 
 ---
 
@@ -269,60 +269,60 @@ fly deploy
 **MySQL serverless da Vitess**
 
 **Pros:**
-- ✅ 5GB storage
-- ✅ 1 billion reads/mês
-- ✅ Database branching
-- ✅ Schema migrations sem downtime
+- ✅ 5GB armazenamento
+- ✅ 1 bilhão de leituras/mês
+- ✅ Ramificação de banco de dados
+- ✅ Migrações de esquema sem downtime
 
 **Cons:**
 - ⚠️ MySQL (não PostgreSQL)
-- ⚠️ Removeu free tier (mas ainda tem)
+- ⚠️ Removeu plano gratuito (mas ainda tem)
 
 ---
 
 ## 💰 Cenários de Custo
 
-### 🆓 Cenário Free (Hobby Project)
+### 🆓 Cenário Gratuito (Projeto Hobby)
 ```
-Frontend: Vercel Free
-Backend: Render Free (750h)
-Database: Supabase Free (500MB)
+Interface: Vercel Gratuito
+Servidor: Render Gratuito (750h)
+Banco de Dados: Supabase Gratuito (500MB)
 Domínio: Freenom (.tk/.ml) ou Namecheap ($0.88)
 
 Total: ~$0-1/mês
-Limitações: Cold starts, 500MB storage, sem backups
+Limitações: Cold starts, 500MB armazenamento, sem backups
 ```
 
-### 💵 Cenário Starter (Side Project)
+### 💵 Cenário Inicial (Projeto Pessoal)
 ```
-Frontend: Vercel Free
-Backend: Render Starter ($7)
-Database: Neon Free (3GB)
+Interface: Vercel Gratuito
+Servidor: Render Inicial ($7)
+Banco de Dados: Neon Gratuito (3GB)
 Domínio: Namecheap ($10/ano)
 
 Total: ~$8/mês
-Benefícios: Sem cold start, 3GB storage, backups
+Benefícios: Sem cold start, 3GB armazenamento, backups
 ```
 
-### 💰 Cenário Growth (Pequeno negócio)
+### 💰 Cenário Crescimento (Pequeno negócio)
 ```
-Frontend: Vercel Pro ($20)
-Backend: Render Standard ($25)
-Database: Neon Pro ($19)
-Monitoring: Sentry Team ($26)
+Interface: Vercel Pro ($20)
+Servidor: Render Padrão ($25)
+Banco de Dados: Neon Pro ($19)
+Monitoramento: Sentry Equipe ($26)
 Domínio + SSL: ($1)
 
 Total: ~$91/mês
-Benefícios: Analytics, 10GB DB, error tracking, SLA
+Benefícios: Analytics, 10GB BD, rastreamento de erros, SLA
 ```
 
-### 🏢 Cenário Production (Enterprise)
+### 🏢 Cenário Produção (Enterprise)
 ```
-Frontend: Cloudflare Workers ($5-20)
-Backend: Digital Ocean Droplets ($24)
-Database: DO Managed PostgreSQL ($30)
+Interface: Cloudflare Workers ($5-20)
+Servidor: Digital Ocean Droplets ($24)
+Banco de Dados: DO PostgreSQL Gerenciado ($30)
 Redis: Upstash ($10)
-Monitoring: Datadog ($31)
+Monitoramento: Datadog ($31)
 Backups: DO Spaces ($5)
 
 Total: ~$105-130/mês
@@ -333,14 +333,14 @@ Benefícios: Controle total, SLA 99.99%, suporte
 
 ## 🎯 Recomendação por Caso de Uso
 
-### Iniciante / Learning
-✅ **Vercel + Render Free + Supabase**
+### Iniciante / Aprendizado
+✅ **Vercel + Render Gratuito + Supabase**
 - Custo: $0-1/mês
 - Mais fácil de configurar
-- Deploy em minutos
+- Implantação em minutos
 
-### Side Project / MVP
-✅ **Vercel + Render Starter + Neon Free**
+### Projeto Pessoal / MVP
+✅ **Vercel + Render Inicial + Neon Gratuito**
 - Custo: ~$8/mês
 - Sem cold starts
 - Backups automáticos
@@ -349,9 +349,9 @@ Benefícios: Controle total, SLA 99.99%, suporte
 ✅ **Vercel Pro + Railway + Neon Pro**
 - Custo: ~$50-70/mês
 - Escalável
-- Ótimo DX
+- Ótima experiência de desenvolvimento
 
-### Enterprise / High Traffic
+### Enterprise / Alto Tráfego
 ✅ **Cloudflare + Digital Ocean + AWS RDS**
 - Custo: $200-500/mês
 - Máximo controle
@@ -361,30 +361,30 @@ Benefícios: Controle total, SLA 99.99%, suporte
 
 ## 📊 Tabela de Decisão Rápida
 
-| Prioridade | Frontend | Backend | Database |
+| Prioridade | Interface | Servidor | Banco de Dados |
 |------------|----------|---------|----------|
-| **Custo** | Vercel Free | Render Free | Supabase |
+| **Custo** | Vercel Gratuito | Render Gratuito | Supabase |
 | **Performance** | Cloudflare | Fly.io | Neon |
-| **DX** | Vercel | Railway | Supabase |
-| **Controle** | Cloudflare | Digital Ocean | PostgreSQL self-hosted |
+| **Experiência** | Vercel | Railway | Supabase |
+| **Controle** | Cloudflare | Digital Ocean | PostgreSQL auto-hospedado |
 | **Escalabilidade** | Vercel Pro | AWS ECS | AWS RDS |
 
 ---
 
 ## 🔗 Links Oficiais
 
-### Frontend
+### Interface
 - [Vercel](https://vercel.com)
 - [Netlify](https://netlify.com)
 - [Cloudflare Pages](https://pages.cloudflare.com)
 
-### Backend
+### Servidor
 - [Render](https://render.com)
 - [Railway](https://railway.app)
 - [Fly.io](https://fly.io)
 - [Digital Ocean](https://digitalocean.com)
 
-### Database
+### Banco de Dados
 - [Supabase](https://supabase.com)
 - [Neon](https://neon.tech)
 - [PlanetScale](https://planetscale.com)
