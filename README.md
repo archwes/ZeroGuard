@@ -1,10 +1,10 @@
-# 🔐 ZeroGuard - Zero-Knowledge Digital Vault
+# 🔐 ZeroGuard - Cofre Digital de Conhecimento Zero
 
 > 🎯 **Primeira vez aqui?** Comece por: [START_HERE.md](./START_HERE.md) - Seu guia de navegação rápida!
 
-## Mission-Critical Security Architecture
+## Arquitetura de Segurança de Missão Crítica
 
-A production-grade, zero-knowledge encryption vault for storing passwords, payment cards, secure notes, identity documents, files, API keys, and TOTP secrets.
+Um cofre de criptografia de conhecimento zero de nível de produção para armazenar senhas, cartões de pagamento, notas seguras, documentos de identidade, arquivos, chaves de API e segredos TOTP.
 
 ---
 
@@ -24,200 +24,200 @@ A production-grade, zero-knowledge encryption vault for storing passwords, payme
 
 ---
 
-### 🎯 Core Security Principles
+### 🎯 Princípios Fundamentais de Segurança
 
-1. **Zero-Knowledge Architecture**: Server never sees plaintext data
-2. **Client-Side Encryption**: All encryption happens in the browser
-3. **Defense in Depth**: Multiple security layers
-4. **Assume Breach**: Design assuming database compromise
-5. **Privacy by Default**: Minimal metadata collection
+1. **Arquitetura de Conhecimento Zero**: O servidor nunca vê dados em texto claro
+2. **Criptografia no Cliente**: Toda criptografia acontece no navegador
+3. **Defesa em Profundidade**: Múltiplas camadas de segurança
+4. **Assume Violação**: Design assumindo comprometimento do banco de dados
+5. **Privacidade por Padrão**: Coleta mínima de metadados
 
-### 🏗️ Architecture Overview
+### 🏗️ Visão Geral da Arquitetura
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                        CLIENT (Browser)                      │
+│                     CLIENTE (Navegador)                      │
 │                                                              │
 │  ┌──────────────────────────────────────────────────────┐  │
-│  │  User Master Password (never leaves client)          │  │
+│  │  Senha Mestra do Usuário (nunca sai do cliente)     │  │
 │  └───────────────────┬──────────────────────────────────┘  │
 │                      │                                      │
 │                      ▼                                      │
 │  ┌──────────────────────────────────────────────────────┐  │
-│  │  Argon2id Key Derivation (high memory cost)         │  │
-│  │  → Master Encryption Key (MEK)                      │  │
-│  │  → Authentication Key (AK)                          │  │
+│  │  Derivação de Chave Argon2id (alto custo memória)   │  │
+│  │  → Chave Mestra de Criptografia (MEK)               │  │
+│  │  → Chave de Autenticação (AK)                       │  │
 │  └───────────────────┬──────────────────────────────────┘  │
 │                      │                                      │
 │                      ▼                                      │
 │  ┌──────────────────────────────────────────────────────┐  │
-│  │  Per-Item Encryption Keys (wrapped with MEK)        │  │
-│  │  AES-256-GCM encryption                             │  │
+│  │  Chaves de Criptografia por Item (envoltas com MEK) │  │
+│  │  Criptografia AES-256-GCM                            │  │
 │  └───────────────────┬──────────────────────────────────┘  │
 │                      │                                      │
-│                      ▼ (encrypted blobs only)              │
+│                      ▼ (apenas blobs criptografados)       │
 └──────────────────────┼──────────────────────────────────────┘
                        │
-                       │ HTTPS + Certificate Pinning
+                       │ HTTPS + Fixação de Certificado
                        │
 ┌──────────────────────▼──────────────────────────────────────┐
-│                      API GATEWAY                             │
+│                     GATEWAY DE API                           │
 │  ┌────────────────────────────────────────────────────────┐ │
-│  │ • Rate Limiting (DDoS protection)                      │ │
-│  │ • JWT Validation (short-lived tokens)                 │ │
-│  │ • CSP Headers (XSS mitigation)                        │ │
-│  │ • Request Signing (integrity verification)            │ │
+│  │ • Limitação de Taxa (proteção DDoS)                   │ │
+│  │ • Validação JWT (tokens de curta duração)             │ │
+│  │ • Cabeçalhos CSP (mitigação XSS)                      │ │
+│  │ • Assinatura de Requisição (verificação integridade) │ │
 │  └────────────────────────────────────────────────────────┘ │
 └──────────────────────┬──────────────────────────────────────┘
                        │
                        ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                    APPLICATION SERVER                        │
+│                  SERVIDOR DE APLICAÇÃO                       │
 │  ┌────────────────────────────────────────────────────────┐ │
-│  │ • Never decrypts data (physically impossible)         │ │
-│  │ • Stores encrypted blobs only                         │ │
-│  │ • Audit logging (non-PII)                            │ │
-│  │ • Breach detection monitoring                        │ │
+│  │ • Nunca descriptografa dados (fisicamente impossível) │ │
+│  │ • Armazena apenas blobs criptografados                │ │
+│  │ • Log de auditoria (não-PII)                          │ │
+│  │ • Monitoramento de detecção de violação               │ │
 │  └────────────────────────────────────────────────────────┘ │
 └──────────────────────┬──────────────────────────────────────┘
                        │
                        ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                      DATABASE (PostgreSQL)                   │
+│                  BANCO DE DADOS (PostgreSQL)                 │
 │                                                              │
-│  users_table:                                               │
-│    • email_hash (not reversible)                           │
-│    • srp_verifier (for auth, not encryption)               │
-│    • wrapped_mek (encrypted with password-derived key)     │
+│  tabela_usuarios:                                           │
+│    • email_hash (não reversível)                           │
+│    • srp_verifier (para auth, não criptografia)            │
+│    • wrapped_mek (criptografado com chave derivada senha)  │
 │                                                              │
-│  vault_items_table:                                         │
-│    • user_id (indexed)                                     │
-│    • item_type (password|card|note|file|totp)             │
-│    • encrypted_data (AES-256-GCM blob)                    │
-│    • nonce/iv                                              │
-│    • encrypted_item_key (wrapped with MEK)                 │
+│  tabela_itens_cofre:                                        │
+│    • user_id (indexado)                                    │
+│    • item_type (password|card|note|file|totp)              │
+│    • encrypted_data (blob AES-256-GCM)                     │
+│    • nonce/iv                                               │
+│    • encrypted_item_key (envolta com MEK)                  │
 │    • created_at, updated_at                                │
 │                                                              │
-│  ⚠️ EVEN WITH FULL DATABASE ACCESS:                         │
-│     Attacker cannot decrypt without user's master password  │
+│  ⚠️ MESMO COM ACESSO COMPLETO AO BANCO DE DADOS:            │
+│     Atacante não pode descriptografar sem senha mestra     │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## 🔒 Encryption Lifecycle
+## 🔒 Ciclo de Vida da Criptografia
 
-### Registration Flow
+### Fluxo de Registro
 
 ```
-1. User enters master password (min 12 chars, enforced complexity)
-2. Generate random salt (32 bytes)
-3. Derive keys using Argon2id:
-   - iterations: 10
-   - memory: 64MB
-   - parallelism: 4
-   Output: 64-byte key material
-   - Bytes 0-31: Master Encryption Key (MEK)
-   - Bytes 32-63: Authentication Key (AK)
+1. Usuário insere senha mestra (mín 12 caracteres, complexidade imposta)
+2. Gerar salt aleatório (32 bytes)
+3. Derivar chaves usando Argon2id:
+   - iterações: 10
+   - memória: 64MB
+   - paralelismo: 4
+   Saída: 64 bytes de material de chave
+   - Bytes 0-31: Chave Mestra de Criptografia (MEK)
+   - Bytes 32-63: Chave de Autenticação (AK)
    
-4. Generate SRP verifier from AK (for authentication)
-5. Encrypt MEK with password-derived key (for recovery)
-6. Send to server:
-   - Email hash (HMAC-SHA256)
+4. Gerar verificador SRP a partir da AK (para autenticação)
+5. Criptografar MEK com chave derivada da senha (para recuperação)
+6. Enviar ao servidor:
+   - Hash do email (HMAC-SHA256)
    - Salt
-   - SRP verifier
-   - Wrapped MEK
-   ❌ Master password NEVER sent
+   - Verificador SRP
+   - MEK envolta
+   ❌ Senha mestra NUNCA é enviada
 ```
 
-### Login Flow (SRP Authentication)
+### Fluxo de Login (Autenticação SRP)
 
 ```
-1. User enters email + password
-2. Request salt from server (using email hash)
-3. Derive MEK and AK locally (same Argon2id process)
-4. Perform SRP handshake with AK:
-   - Server cannot learn password
-   - Client cannot be impersonated
-   - Mutual authentication
-5. On success:
-   - Server returns JWT (15min expiry)
-   - Client stores MEK in memory only (never persisted)
-6. Refresh token stored in httpOnly cookie
+1. Usuário insere email + senha
+2. Solicitar salt do servidor (usando hash do email)
+3. Derivar MEK e AK localmente (mesmo processo Argon2id)
+4. Executar handshake SRP com AK:
+   - Servidor não pode aprender a senha
+   - Cliente não pode ser personificado
+   - Autenticação mútua
+5. Em caso de sucesso:
+   - Servidor retorna JWT (expiração 15min)
+   - Cliente armazena MEK apenas na memória (nunca persistido)
+6. Token de atualização armazenado em cookie httpOnly
 ```
 
-### Data Encryption Flow
+### Fluxo de Criptografia de Dados
 
 ```
-FOR EACH VAULT ITEM:
+PARA CADA ITEM DO COFRE:
 
-1. Generate random item key (256-bit)
-2. Encrypt vault data:
-   plaintext → AES-256-GCM(item_key) → ciphertext
+1. Gerar chave de item aleatória (256-bit)
+2. Criptografar dados do cofre:
+   texto_claro → AES-256-GCM(item_key) → texto_cifrado
    
-3. Wrap item key:
+3. Envolver chave do item:
    item_key → AES-256-GCM(MEK) → wrapped_key
    
-4. Send to server:
+4. Enviar ao servidor:
    {
-     encrypted_data: base64(ciphertext),
+     encrypted_data: base64(texto_cifrado),
      encrypted_key: base64(wrapped_key),
      nonce: base64(nonce),
      auth_tag: base64(tag)
    }
 
-5. Server stores encrypted blob (never has plaintext or MEK)
+5. Servidor armazena blob criptografado (nunca tem texto claro ou MEK)
 
-DECRYPTION (reverse):
-1. Fetch encrypted item from server
-2. Unwrap item key: AES-256-GCM-DECRYPT(MEK, wrapped_key)
-3. Decrypt data: AES-256-GCM-DECRYPT(item_key, ciphertext)
+DESCRIPTOGRAFIA (reverso):
+1. Buscar item criptografado do servidor
+2. Desembrulhar chave do item: AES-256-GCM-DECRYPT(MEK, wrapped_key)
+3. Descriptografar dados: AES-256-GCM-DECRYPT(item_key, texto_cifrado)
 ```
 
-## 🛡️ Threat Model & Mitigations
+## 🛡️ Modelo de Ameaças & Mitigações
 
-| Threat | Likelihood | Impact | Mitigation |
-|--------|-----------|--------|------------|
-| **Database Breach** | HIGH | CRITICAL | Zero-knowledge encryption; data useless without password |
-| **XSS Attack** | MEDIUM | HIGH | Strict CSP, DOMPurify, Framework XSS protections, input sanitization |
-| **MITM** | MEDIUM | HIGH | HTTPS only, HSTS, certificate pinning, TLS 1.3+ |
-| **Credential Stuffing** | HIGH | MEDIUM | Rate limiting, CAPTCHA, breach detection, account lockout |
-| **Token Theft** | MEDIUM | HIGH | Short-lived JWTs (15min), httpOnly cookies, token rotation |
-| **Malicious Extension** | MEDIUM | CRITICAL | Integrity monitoring, Web Crypto API (harder to intercept) |
-| **Supply Chain Attack** | LOW | CRITICAL | Dependency pinning, SRI hashes, automated audits, minimal deps |
-| **Memory Dump** | LOW | HIGH | No plaintext persistence, clear sensitive data, use SecureString patterns |
-| **Phishing** | HIGH | HIGH | Security keys (WebAuthn), email verification, trusted device tracking |
-| **Session Fixation** | LOW | MEDIUM | Regenerate session on login, secure cookie flags |
+| Ameaça | Probabilidade | Impacto | Mitigação |
+|--------|---------------|---------|-----------|
+| **Violação de Banco de Dados** | ALTA | CRÍTICO | Criptografia de conhecimento zero; dados inúteis sem senha |
+| **Ataque XSS** | MÉDIA | ALTO | CSP rigoroso, DOMPurify, proteções XSS do framework, sanitização de entrada |
+| **MITM** | MÉDIA | ALTO | Apenas HTTPS, HSTS, fixação de certificado, TLS 1.3+ |
+| **Credential Stuffing** | ALTA | MÉDIA | Limitação de taxa, CAPTCHA, detecção de violação, bloqueio de conta |
+| **Roubo de Token** | MÉDIA | ALTO | JWTs de curta duração (15min), cookies httpOnly, rotação de token |
+| **Extensão Maliciosa** | MÉDIA | CRÍTICO | Monitoramento de integridade, Web Crypto API (mais difícil de interceptar) |
+| **Ataque à Cadeia de Suprimentos** | BAIXA | CRÍTICO | Fixação de dependências, hashes SRI, auditorias automatizadas, deps mínimas |
+| **Dump de Memória** | BAIXA | ALTO | Sem persistência de texto claro, limpar dados sensíveis, usar padrões SecureString |
+| **Phishing** | ALTA | ALTO | Chaves de segurança (WebAuthn), verificação de email, rastreamento de dispositivo confiável |
+| **Fixação de Sessão** | BAIXA | MÉDIA | Regenerar sessão no login, flags de cookie seguros |
 
-## 📊 Database Schema
+## 📊 Schema do Banco de Dados
 
 ```sql
--- Users table (authentication only)
+-- Tabela de usuários (apenas autenticação)
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    email_hash VARCHAR(64) UNIQUE NOT NULL,  -- HMAC-SHA256 of email
-    salt BYTEA NOT NULL,                     -- For Argon2id
-    srp_verifier TEXT NOT NULL,              -- SRP authentication
-    wrapped_mek BYTEA NOT NULL,              -- MEK encrypted with password
+    email_hash VARCHAR(64) UNIQUE NOT NULL,  -- HMAC-SHA256 do email
+    salt BYTEA NOT NULL,                     -- Para Argon2id
+    srp_verifier TEXT NOT NULL,              -- Autenticação SRP
+    wrapped_mek BYTEA NOT NULL,              -- MEK criptografada com senha
     mfa_enabled BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
 
--- Vault items (all encrypted)
+-- Itens do cofre (todos criptografados)
 CREATE TABLE vault_items (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
     item_type VARCHAR(20) NOT NULL,          -- password|card|note|file|totp|identity
-    encrypted_data BYTEA NOT NULL,           -- AES-256-GCM ciphertext
-    encrypted_key BYTEA NOT NULL,            -- Item key wrapped with MEK
-    nonce BYTEA NOT NULL,                    -- GCM nonce
-    auth_tag BYTEA NOT NULL,                 -- GCM authentication tag
-    metadata JSONB,                          -- Encrypted metadata (e.g., category, tags)
+    encrypted_data BYTEA NOT NULL,           -- Texto cifrado AES-256-GCM
+    encrypted_key BYTEA NOT NULL,            -- Chave do item envolta com MEK
+    nonce BYTEA NOT NULL,                    -- Nonce GCM
+    auth_tag BYTEA NOT NULL,                 -- Tag de autenticação GCM
+    metadata JSONB,                          -- Metadados criptografados (ex: categoria, tags)
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
     INDEX idx_user_items (user_id, item_type)
 );
 
--- Audit log (privacy-preserving)
+-- Log de auditoria (preservando privacidade)
 CREATE TABLE audit_log (
     id BIGSERIAL PRIMARY KEY,
     user_id UUID REFERENCES users(id),
@@ -228,7 +228,7 @@ CREATE TABLE audit_log (
     timestamp TIMESTAMP DEFAULT NOW()
 );
 
--- Sessions (for JWT blacklisting)
+-- Sessões (para blacklist de JWT)
 CREATE TABLE sessions (
     id UUID PRIMARY KEY,
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
@@ -237,50 +237,50 @@ CREATE TABLE sessions (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
--- Emergency access / Dead man's switch
+-- Acesso de emergência / Interruptor de homem morto
 CREATE TABLE emergency_contacts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
     contact_email_hash VARCHAR(64) NOT NULL,
     waiting_period_days INTEGER DEFAULT 30,
-    encrypted_recovery_key BYTEA NOT NULL,   -- Key wrapped for emergency access
+    encrypted_recovery_key BYTEA NOT NULL,   -- Chave envolta para acesso de emergência
     status VARCHAR(20) DEFAULT 'active'
 );
 ```
 
-## 🚀 Quick Start
+## 🚀 Início Rápido
 
-### Prerequisites
+### Pré-requisitos
 
 - Node.js 20+
 - PostgreSQL 15+
 - Redis 7+
 - Docker & Docker Compose
 
-### Development Setup
+### Configuração de Desenvolvimento
 
 ```bash
-# Install dependencies
+# Instalar dependências
 cd apps/web && npm install
 cd ../api && npm install
 
-# Start infrastructure
+# Iniciar infraestrutura
 docker-compose up -d
 
-# Run migrations
+# Executar migrações
 cd apps/api && npm run migrate
 
-# Start development servers
-npm run dev  # Runs both web and API
+# Iniciar servidores de desenvolvimento
+npm run dev  # Executa tanto web quanto API
 ```
 
-### Environment Variables
+### Variáveis de Ambiente
 
 ```bash
 # API (.env)
 DATABASE_URL=postgresql://vault:secret@localhost:5432/zeroguard
 REDIS_URL=redis://localhost:6379
-JWT_SECRET=<use-vault-or-secrets-manager>
+JWT_SECRET=<use-vault-ou-gerenciador-de-segredos>
 RATE_LIMIT_MAX=100
 RATE_LIMIT_WINDOW=900000
 
@@ -289,32 +289,32 @@ VITE_API_URL=https://api.zeroguard.io
 VITE_ENABLE_ANALYTICS=false
 ```
 
-## 📁 Project Structure
+## 📁 Estrutura do Projeto
 
 ```
 vault/
 ├── apps/
-│   ├── web/                    # React frontend
+│   ├── web/                    # Frontend React
 │   │   ├── src/
-│   │   │   ├── crypto/         # Encryption primitives
-│   │   │   ├── auth/           # Authentication logic
-│   │   │   ├── vault/          # Vault components
-│   │   │   ├── components/     # UI components
-│   │   │   └── hooks/          # React hooks
+│   │   │   ├── crypto/         # Primitivas de criptografia
+│   │   │   ├── auth/           # Lógica de autenticação
+│   │   │   ├── vault/          # Componentes do cofre
+│   │   │   ├── components/     # Componentes de UI
+│   │   │   └── hooks/          # Hooks React
 │   │   └── package.json
 │   │
-│   └── api/                    # Fastify backend
+│   └── api/                    # Backend Fastify
 │       ├── src/
-│       │   ├── routes/         # API endpoints
-│       │   ├── middleware/     # Security middleware
-│       │   ├── services/       # Business logic
-│       │   ├── db/             # Database layer
-│       │   └── utils/          # Utilities
+│       │   ├── routes/         # Endpoints da API
+│       │   ├── middleware/     # Middleware de segurança
+│       │   ├── services/       # Lógica de negócio
+│       │   ├── db/             # Camada de banco de dados
+│       │   └── utils/          # Utilitários
 │       └── package.json
 │
 ├── packages/
-│   ├── shared/                 # Shared types/utils
-│   └── crypto/                 # Shared crypto utilities
+│   ├── shared/                 # Tipos/utils compartilhados
+│   └── crypto/                 # Utilitários de criptografia compartilhados
 │
 ├── infrastructure/
 │   ├── docker/
@@ -327,49 +327,49 @@ vault/
     └── API.md
 ```
 
-## 🔐 Security Best Practices Implemented
+## 🔐 Melhores Práticas de Segurança Implementadas
 
-- ✅ Zero-knowledge encryption (client-side only)
-- ✅ Argon2id key derivation (memory-hard)
-- ✅ AES-256-GCM authenticated encryption
-- ✅ SRP authentication (password never transmitted)
-- ✅ Short-lived JWTs (15 minutes)
-- ✅ Rate limiting and DDoS protection
-- ✅ Strict Content Security Policy
-- ✅ HSTS and security headers
-- ✅ Input validation and sanitization
-- ✅ SQL injection prevention (parameterized queries)
-- ✅ Audit logging (privacy-preserving)
-- ✅ Automated security scanning (dependabot, snyk)
-- ✅ Regular penetration testing
-- ✅ Incident response plan
+- ✅ Criptografia de conhecimento zero (apenas no cliente)
+- ✅ Derivação de chave Argon2id (memória-pesada)
+- ✅ Criptografia autenticada AES-256-GCM
+- ✅ Autenticação SRP (senha nunca transmitida)
+- ✅ JWTs de curta duração (15 minutos)
+- ✅ Limitação de taxa e proteção DDoS
+- ✅ Política de Segurança de Conteúdo rigorosa
+- ✅ HSTS e cabeçalhos de segurança
+- ✅ Validação e sanitização de entrada
+- ✅ Prevenção de injeção SQL (consultas parametrizadas)
+- ✅ Log de auditoria (preservando privacidade)
+- ✅ Varredura de segurança automatizada (dependabot, snyk)
+- ✅ Testes de penetração regulares
+- ✅ Plano de resposta a incidentes
 
-## 📜 Compliance Readiness
+## 📍c Prontidão para Conformidade
 
-- **SOC 2 Type II**: Audit logging, access controls
-- **GDPR**: Data portability, right to deletion, data minimization
-- **HIPAA**: PHI encryption, audit trails (if storing health records)
-- **PCI DSS**: If handling payment cards (encrypted card storage)
+- **SOC 2 Tipo II**: Log de auditoria, controles de acesso
+- **GDPR**: Portabilidade de dados, direito ao esquecimento, minimização de dados
+- **HIPAA**: Criptografia PHI, trilhas de auditoria (se armazenando registros de saúde)
+- **PCI DSS**: Se lidando com cartões de pagamento (armazenamento criptografado de cartões)
 
-## 🧪 Testing Strategy
+## 🧪 Estratégia de Testes
 
-- Unit tests: 80%+ coverage
-- Integration tests: API endpoints
-- E2E tests: Critical user flows (Playwright)
-- Security tests: OWASP ZAP, Burp Suite
-- Penetration testing: Quarterly by external firm
-- Crypto audits: Annual review by cryptography experts
+- Testes unitários: Cobertura de 80%+
+- Testes de integração: Endpoints da API
+- Testes E2E: Fluxos críticos do usuário (Playwright)
+- Testes de segurança: OWASP ZAP, Burp Suite
+- Testes de penetração: Trimestralmente por empresa externa
+- Auditorias de criptografia: Revisão anual por especialistas em criptografia
 
-## 📈 Monitoring & Observability
+## 📈 Monitoramento & Observabilidade
 
-- **Performance**: Response times, database queries
-- **Security**: Failed login attempts, unusual access patterns
-- **Business**: User growth, vault item creation
-- **Alerts**: Anomaly detection, breach indicators
+- **Desempenho**: Tempos de resposta, consultas ao banco de dados
+- **Segurança**: Tentativas de login falhadas, padrões de acesso incomuns
+- **Negócios**: Crescimento de usuários, criação de itens do cofre
+- **Alertas**: Detecção de anomalias, indicadores de violação
 
-## � Quick Start
+## 🚀 Início Rápido (Resumo)
 
-### Development
+### Desenvolvimento
 ```bash
 # 1. Instalar dependências
 npm install
@@ -396,7 +396,7 @@ Acesse: http://localhost:3000
 - 🏠 **[LOCAL_SETUP.md](./LOCAL_SETUP.md)** - Setup completo passo a passo (recomendado para iniciantes)
 - ⚡ **[QUICK_START.md](./QUICK_START.md)** - Guia rápido de desenvolvimento
 
-### Production Deploy
+### Deploy em Produção
 
 **Documentação Completa:**
 - 📖 **[PRODUCTION.md](./PRODUCTION.md)** - Guia completo de configuração
@@ -425,39 +425,39 @@ vercel --prod  # Frontend
 - Backend: Render ($7/mês) ou Railway ($5/mês)
 - Database: Supabase (Free) ou Neon (Free)
 
-**Custo Total:** ~$1-27/mês dependendo do plan
+**Custo Total:** ~$1-27/mês dependendo do plano
 
 ---
 
-## �🔄 Backup & Disaster Recovery
+## 🔄 Backup & Recuperação de Desastres
 
-- **Database**: Continuous backup with point-in-time recovery
-- **Encryption Keys**: Never backed up in plaintext
-- **User Data**: Encrypted backup export feature
-- **RPO**: < 1 hour
-- **RTO**: < 4 hours
+- **Banco de Dados**: Backup contínuo com recuperação point-in-time
+- **Chaves de Criptografia**: Nunca são armazenadas em backup em texto claro
+- **Dados do Usuário**: Recurso de exportação de backup criptografado
+- **RPO**: < 1 hora
+- **RTO**: < 4 horas
 
-## 🌐 Deployment Architecture
+## 🌐 Arquitetura de Implantação
 
 ```
-[CloudFlare] → [Load Balancer] → [API Servers (Auto-scaling)]
+[CloudFlare] → [Balanceador de Carga] → [Servidores API (Auto-scaling)]
                                       ↓
-                               [PostgreSQL Primary]
+                               [PostgreSQL Primário]
                                       ↓
-                            [PostgreSQL Read Replicas]
+                            [Réplicas de Leitura PostgreSQL]
                                       
-[Redis Cluster] ← [Session Management]
-[HashiCorp Vault] ← [Secrets Management]
+[Cluster Redis] ← [Gerenciamento de Sessão]
+[HashiCorp Vault] ← [Gerenciamento de Segredos]
 ```
 
-## 📞 Security Contact
+## 📞 Contato de Segurança
 
-- **Report vulnerabilities**: security@zeroguard.io
-- **PGP Key**: [See SECURITY.md]
-- **Bug Bounty**: HackerOne program (coming soon)
+- **Reportar vulnerabilidades**: security@zeroguard.io
+- **Chave PGP**: [Ver SECURITY.md]
+- **Bug Bounty**: Programa HackerOne (em breve)
 
 ---
 
-**License**: MIT (modify for production use)
-**Version**: 1.0.0-alpha
-**Last Security Audit**: [Date]
+**Licença**: MIT (modificar para uso em produção)
+**Versão**: 1.0.0-alpha
+**Última Auditoria de Segurança**: [Data]
