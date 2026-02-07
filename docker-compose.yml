@@ -1,0 +1,126 @@
+version: '3.9'
+
+services:
+  # PostgreSQL - Primary Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: zeroguard-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: zeroguard
+      POSTGRES_USER: vault_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-change_me_in_production}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infrastructure/docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: 
+      - "postgres"
+      - "-c"
+      - "max_connections=200"
+      - "-c"
+      - "shared_buffers=256MB"
+      - "-c"
+      - "effective_cache_size=1GB"
+      - "-c"
+      - "work_mem=16MB"
+      - "-c"
+      - "maintenance_work_mem=128MB"
+      - "-c"
+      - "ssl=on"
+      - "-c"
+      - "ssl_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem"
+      - "-c"
+      - "ssl_key_file=/etc/ssl/private/ssl-cert-snakeoil.key"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vault_user -d zeroguard"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis - Session Store & Caching
+  redis:
+    image: redis:7-alpine
+    container_name: zeroguard-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass ${REDIS_PASSWORD:-change_me_in_production} --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Nginx - Reverse Proxy (Production)
+  nginx:
+    image: nginx:alpine
+    container_name: zeroguard-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infrastructure/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./infrastructure/docker/nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - api
+    profiles: ["production"]
+
+  # API Server
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: zeroguard-api
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 3001
+      DATABASE_URL: postgresql://vault_user:${DB_PASSWORD:-change_me_in_production}@postgres:5432/zeroguard
+      REDIS_URL: redis://:${REDIS_PASSWORD:-change_me_in_production}@redis:6379
+      JWT_SECRET: ${JWT_SECRET:-generate_strong_secret}
+      RATE_LIMIT_MAX: 100
+      RATE_LIMIT_WINDOW: 900000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./apps/api/src:/app/src
+      - api_uploads:/app/uploads
+    profiles: ["production"]
+
+  # Web Application
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: zeroguard-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      VITE_API_URL: ${API_URL:-http://localhost:3001}
+    depends_on:
+      - api
+    profiles: ["production"]
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  api_uploads:
+    driver: local
+
+networks:
+  default:
+    name: zeroguard-network

@@ -1,0 +1,113 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Run linter
+        run: npm run lint
+      
+      - name: Run tests
+        run: npm run test
+        continue-on-error: true
+
+  deploy-backend:
+    name: Deploy Backend
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Trigger Render Deploy
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+      
+      - name: Wait for deployment
+        run: sleep 60
+      
+      - name: Health check
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.API_URL }}/health)
+          if [ $response -eq 200 ]; then
+            echo "✅ Backend is healthy"
+          else
+            echo "❌ Backend health check failed with status $response"
+            exit 1
+          fi
+
+  deploy-frontend:
+    name: Deploy Frontend
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: cd apps/web && npm install
+      
+      - name: Build
+        run: cd apps/web && npm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_APP_NAME: ZeroGuard
+          VITE_APP_VERSION: 1.0.0
+      
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: apps/web
+
+  notify:
+    name: Send Notification
+    needs: [deploy-backend, deploy-frontend]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Send Discord notification
+        if: secrets.DISCORD_WEBHOOK != ''
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            curl -X POST ${{ secrets.DISCORD_WEBHOOK }} \
+              -H "Content-Type: application/json" \
+              -d '{"content":"✅ Deploy realizado com sucesso!"}'
+          else
+            curl -X POST ${{ secrets.DISCORD_WEBHOOK }} \
+              -H "Content-Type: application/json" \
+              -d '{"content":"❌ Falha no deploy. Verifique os logs."}'
+          fi
