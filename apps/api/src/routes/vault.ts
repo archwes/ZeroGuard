@@ -9,7 +9,7 @@
 
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { z } from 'zod';
-import { nanoid } from 'nanoid';
+import { randomUUID } from 'crypto';
 
 /**
  * Encrypted vault item schema (for validation)
@@ -107,9 +107,13 @@ export async function vaultRoutes(server: FastifyInstance) {
     {
       onRequest: [server.authenticate],
       schema: {
-        params: z.object({
-          id: z.string().uuid(),
-        }),
+        params: {
+          type: 'object',
+          required: ['id'],
+          properties: {
+            id: { type: 'string', format: 'uuid' },
+          },
+        },
       },
     },
     async (request: AuthenticatedRequest, reply: FastifyReply) => {
@@ -176,16 +180,13 @@ export async function vaultRoutes(server: FastifyInstance) {
     '/vault/items',
     {
       onRequest: [server.authenticate],
-      schema: {
-        body: EncryptedVaultItemSchema,
-      },
     },
     async (request: AuthenticatedRequest, reply: FastifyReply) => {
       try {
         const { id: userId } = request.user;
-        const body = request.body as z.infer<typeof EncryptedVaultItemSchema>;
+        const body = EncryptedVaultItemSchema.parse(request.body);
 
-        const id = body.id || nanoid();
+        const id = body.id || randomUUID();
 
         // Convert base64 to bytea
         const encryptedData = Buffer.from(body.encryptedData, 'base64');
@@ -200,14 +201,22 @@ export async function vaultRoutes(server: FastifyInstance) {
         const itemSize = encryptedData.length + encryptedKey.length;
 
         // Check storage quota
-        const userResult = await server.db.query(
-          `SELECT storage_used, storage_limit FROM users WHERE id = $1`,
+        const limitResult = await server.db.query(
+          `SELECT storage_limit FROM users WHERE id = $1`,
           [userId]
         );
+        const storageLimit = Number(limitResult.rows[0]?.storage_limit ?? 1073741824);
 
-        const { storage_used, storage_limit } = userResult.rows[0];
+        const usedResult = await server.db.query(
+          `SELECT COALESCE(SUM(octet_length(encrypted_data) + octet_length(encrypted_key)), 0) AS used
+           FROM vault_items WHERE user_id = $1 AND deleted_at IS NULL`,
+          [userId]
+        );
+        const storageUsed = Number(usedResult.rows[0]?.used ?? 0);
 
-        if (storage_used + itemSize > storage_limit) {
+        server.log.info({ storageUsed, storageLimit, itemSize }, 'Storage check');
+
+        if (storageUsed + itemSize > storageLimit) {
           return reply.code(413).send({
             error: 'Storage Limit Exceeded',
             message: 'Your storage quota has been exceeded',
@@ -223,10 +232,13 @@ export async function vaultRoutes(server: FastifyInstance) {
           [id, userId, body.type, encryptedData, encryptedKey, nonce, authTag, encryptedMetadata]
         );
 
-        // Update storage usage
+        // Sync storage usage from actual data
         await server.db.query(
-          `UPDATE users SET storage_used = storage_used + $1 WHERE id = $2`,
-          [itemSize, userId]
+          `UPDATE users SET storage_used = (
+            SELECT COALESCE(SUM(LENGTH(encrypted_data) + LENGTH(encrypted_key)), 0)
+            FROM vault_items WHERE user_id = $1 AND deleted_at IS NULL
+          ) WHERE id = $1`,
+          [userId]
         );
 
         // Log audit event
@@ -260,10 +272,13 @@ export async function vaultRoutes(server: FastifyInstance) {
     {
       onRequest: [server.authenticate],
       schema: {
-        params: z.object({
-          id: z.string().uuid(),
-        }),
-        body: EncryptedVaultItemSchema,
+        params: {
+          type: 'object',
+          required: ['id'],
+          properties: {
+            id: { type: 'string', format: 'uuid' },
+          },
+        },
       },
     },
     async (request: AuthenticatedRequest, reply: FastifyReply) => {
@@ -338,9 +353,13 @@ export async function vaultRoutes(server: FastifyInstance) {
     {
       onRequest: [server.authenticate],
       schema: {
-        params: z.object({
-          id: z.string().uuid(),
-        }),
+        params: {
+          type: 'object',
+          required: ['id'],
+          properties: {
+            id: { type: 'string', format: 'uuid' },
+          },
+        },
       },
     },
     async (request: AuthenticatedRequest, reply: FastifyReply) => {

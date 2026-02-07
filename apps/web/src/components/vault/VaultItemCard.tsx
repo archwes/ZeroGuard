@@ -2,24 +2,19 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Key, CreditCard, FileText, Lock, Copy, Eye, EyeOff, Star, MoreVertical } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { GlassCard } from '@/components/ui';
+import { useVault, type VaultItemDisplay } from '@/hooks/useVault';
 import { copyToClipboard } from '@/lib/utils';
 import toast from 'react-hot-toast';
+import ViewItemModal from './ViewItemModal';
 
 interface VaultItemCardProps {
-  item: {
-    id: string;
-    type: 'password' | 'card' | 'note' | 'identity' | 'file' | 'totp' | 'api-key' | 'license';
-    name: string;
-    username?: string;
-    maskedNumber?: string;
-    favorite: boolean;
-    lastUsed: string;
-  };
+  item: VaultItemDisplay;
 }
 
 export default function VaultItemCard({ item }: VaultItemCardProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [showDetail, setShowDetail] = useState(false);
   const [isFavorite, setIsFavorite] = useState(item.favorite);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -53,8 +48,14 @@ export default function VaultItemCard({ item }: VaultItemCardProps) {
     toast.success('Compartilhamento em breve!');
   };
 
-  const handleDelete = () => {
-    toast.success('Exclusão em breve!');
+  const handleDelete = async () => {
+    setShowMenu(false);
+    try {
+      await useVault.getState().deleteItem(item.id);
+      toast.success('Item excluído com sucesso');
+    } catch {
+      toast.error('Erro ao excluir item');
+    }
   };
 
   const getIcon = () => {
@@ -98,19 +99,21 @@ export default function VaultItemCard({ item }: VaultItemCardProps) {
     return colors[item.type];
   };
 
-  const handleCopy = async (text: string, label: string) => {
+  const handleCopy = async (text: string, successMsg: string) => {
     try {
       await copyToClipboard(text);
-      toast.success(`${label} copiado!`);
-    } catch (error) {
+      toast.success(successMsg);
+    } catch {
       toast.error('Erro ao copiar');
     }
   };
 
   return (
+    <>
     <motion.div
       whileHover={{ y: -4 }}
       className="relative"
+      onClick={() => setShowDetail(true)}
     >
       <GlassCard hover className="group cursor-pointer">
         {/* Header */}
@@ -127,7 +130,7 @@ export default function VaultItemCard({ item }: VaultItemCardProps) {
 
           <div className="flex items-center gap-2">
             <button
-              onClick={handleFavorite}
+              onClick={(e) => { e.stopPropagation(); handleFavorite(); }}
               className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-lg"
             >
               <Star className={`w-4 h-4 ${
@@ -137,7 +140,7 @@ export default function VaultItemCard({ item }: VaultItemCardProps) {
               } transition-colors`} />
             </button>
             <button
-              onClick={() => setShowMenu(!showMenu)}
+              onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
               className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-100 dark:hover:bg-dark-700 rounded-lg"
             >
               <MoreVertical className="w-4 h-4" />
@@ -154,7 +157,7 @@ export default function VaultItemCard({ item }: VaultItemCardProps) {
                 <p className="text-sm font-medium truncate">{item.username}</p>
               </div>
               <button
-                onClick={() => handleCopy(item.username as string, 'Usuário')}
+                onClick={(e) => { e.stopPropagation(); handleCopy(item.username as string, 'Usuário copiado!'); }}
                 className="p-2 hover:bg-gray-200 dark:hover:bg-dark-600 rounded-lg transition-colors"
               >
                 <Copy className="w-4 h-4" />
@@ -167,18 +170,18 @@ export default function VaultItemCard({ item }: VaultItemCardProps) {
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Senha</p>
                 <p className="text-sm font-mono">
-                  {showPassword ? '••••••••••' : '••••••••••'}
+                  {showPassword ? (item.plaintext?.password as string || '') : '••••••••••'}
                 </p>
               </div>
               <div className="flex gap-1">
                 <button
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={(e) => { e.stopPropagation(); setShowPassword(!showPassword); }}
                   className="p-2 hover:bg-gray-200 dark:hover:bg-dark-600 rounded-lg transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
                 <button
-                  onClick={() => handleCopy('senha-aqui', 'Senha')}
+                  onClick={(e) => { e.stopPropagation(); handleCopy(item.plaintext?.password as string || '', 'Senha copiada!'); }}
                   className="p-2 hover:bg-gray-200 dark:hover:bg-dark-600 rounded-lg transition-colors"
                 >
                   <Copy className="w-4 h-4" />
@@ -211,8 +214,8 @@ export default function VaultItemCard({ item }: VaultItemCardProps) {
           className="absolute inset-x-0 bottom-0 glass-strong p-3 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity border-t border-gray-200 dark:border-dark-700"
         >
           <div className="flex gap-2 text-xs">
-            <button onClick={handleEdit} className="flex-1 btn-secondary py-2">Editar</button>
-            <button onClick={handleShare} className="flex-1 btn-secondary py-2">Compartilhar</button>
+            <button onClick={(e) => { e.stopPropagation(); handleEdit(); }} className="flex-1 btn-secondary py-2">Editar</button>
+            <button onClick={(e) => { e.stopPropagation(); handleShare(); }} className="flex-1 btn-secondary py-2">Compartilhar</button>
           </div>
         </motion.div>
 
@@ -227,7 +230,8 @@ export default function VaultItemCard({ item }: VaultItemCardProps) {
               className="absolute top-12 right-2 glass-strong border border-gray-200 dark:border-dark-700 rounded-xl shadow-xl z-10 min-w-[160px] overflow-hidden"
             >
               <button
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   handleFavorite();
                   setShowMenu(false);
                 }}
@@ -237,7 +241,8 @@ export default function VaultItemCard({ item }: VaultItemCardProps) {
                 {isFavorite ? 'Remover favorito' : 'Adicionar favorito'}
               </button>
               <button
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   handleEdit();
                   setShowMenu(false);
                 }}
@@ -246,7 +251,8 @@ export default function VaultItemCard({ item }: VaultItemCardProps) {
                 Editar
               </button>
               <button
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   handleShare();
                   setShowMenu(false);
                 }}
@@ -255,7 +261,8 @@ export default function VaultItemCard({ item }: VaultItemCardProps) {
                 Compartilhar
               </button>
               <button
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   handleDelete();
                   setShowMenu(false);
                 }}
@@ -268,5 +275,12 @@ export default function VaultItemCard({ item }: VaultItemCardProps) {
         </AnimatePresence>
       </GlassCard>
     </motion.div>
+
+    <ViewItemModal
+      item={item}
+      isOpen={showDetail}
+      onClose={() => setShowDetail(false)}
+    />
+    </>
   );
 }

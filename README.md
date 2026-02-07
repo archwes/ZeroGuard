@@ -1,463 +1,463 @@
-# 🔐 ZeroGuard - Cofre Digital de Conhecimento Zero
+# 🔐 ZeroGuard — Cofre Digital de Conhecimento Zero
 
-> 🎯 **Primeira vez aqui?** Comece por: [START_HERE.md](./START_HERE.md) - Seu guia de navegação rápida!
+> **Versão:** 0.9.0-alpha · **Última atualização:** Fevereiro 2026
 
-## Arquitetura de Segurança de Missão Crítica
-
-Um cofre de criptografia de conhecimento zero de nível de produção para armazenar senhas, cartões de pagamento, notas seguras, documentos de identidade, arquivos, chaves de API e segredos TOTP.
+Um cofre de senhas com criptografia de conhecimento zero. O servidor **nunca** tem acesso aos seus dados em texto claro — toda criptografia e descriptografia acontece exclusivamente no navegador.
 
 ---
 
-## 📚 Guias Rápidos
+## 📚 Índice
 
-| Guia | Descrição | Para quem |
-|------|-----------|-----------|
-| 🏠 **[LOCAL_SETUP.md](./LOCAL_SETUP.md)** | Setup completo passo a passo | Primeira vez configurando |
-| ✅ **[SETUP_CHECKLIST.md](./SETUP_CHECKLIST.md)** | Checklist interativo | Acompanhar progresso |
-| ⚡ **[QUICK_START.md](./QUICK_START.md)** | Guia rápido de desenvolvimento | Já tem ambiente configurado |
-| 🚀 **[PRODUCTION.md](./PRODUCTION.md)** | Deploy em produção completo | Colocar no ar |
-| 📋 **[DEPLOY_CHECKLIST.md](./DEPLOY_CHECKLIST.md)** | Checklist de deploy | Deploy step-by-step |
-| 🏢 **[HOSTING_COMPARISON.md](./HOSTING_COMPARISON.md)** | Comparação de plataformas | Escolher onde hospedar |
-| 🔐 **[AUTHENTICATION.md](./apps/web/AUTHENTICATION.md)** | Sistema de autenticação | Entender auth |
-| ❓ **[FAQ.md](./FAQ.md)** | Perguntas frequentes | Respostas rápidas |
-| 📖 **[INDEX.md](./INDEX.md)** | Índice completo | Navegação total |
+- [Stack Tecnológico](#-stack-tecnológico)
+- [Funcionalidades Implementadas](#-funcionalidades-implementadas)
+- [Changelog Recente](#-changelog-recente)
+- [Executando Localmente](#-executando-localmente)
+- [Executando em Produção](#-executando-em-produção)
+- [Arquitetura de Segurança](#-arquitetura-de-segurança)
+- [Estrutura do Projeto](#-estrutura-do-projeto)
+- [Variáveis de Ambiente](#-variáveis-de-ambiente)
+- [TODO — O que Falta](#-todo--o-que-falta)
+- [Documentação Adicional](#-documentação-adicional)
 
 ---
 
-### 🎯 Princípios Fundamentais de Segurança
+## 🧰 Stack Tecnológico
 
-1. **Arquitetura de Conhecimento Zero**: O servidor nunca vê dados em texto claro
-2. **Criptografia no Cliente**: Toda criptografia acontece no navegador
-3. **Defesa em Profundidade**: Múltiplas camadas de segurança
-4. **Assume Violação**: Design assumindo comprometimento do banco de dados
-5. **Privacidade por Padrão**: Coleta mínima de metadados
+| Camada | Tecnologia | Versão |
+|--------|-----------|--------|
+| **Frontend** | React + TypeScript | 18 |
+| **Bundler** | Vite | 7.3.1 |
+| **Estilização** | Tailwind CSS | 3.x |
+| **Animações** | Framer Motion | — |
+| **Estado** | Zustand (persist) | — |
+| **Roteamento** | React Router DOM | v6 |
+| **Backend** | Fastify | 5.7.4 |
+| **Banco de Dados** | PostgreSQL (raw SQL via `postgres`) | 15+ |
+| **Autenticação** | JWT (15min) + bcrypt (pgcrypto) | — |
+| **Criptografia** | AES-256-GCM (`@noble/ciphers`) + Argon2id (`@noble/hashes`) | — |
+| **Monorepo** | npm workspaces | — |
 
-### 🏗️ Visão Geral da Arquitetura
+---
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     CLIENTE (Navegador)                      │
-│                                                              │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │  Senha Mestra do Usuário (nunca sai do cliente)     │  │
-│  └───────────────────┬──────────────────────────────────┘  │
-│                      │                                      │
-│                      ▼                                      │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │  Derivação de Chave Argon2id (alto custo memória)   │  │
-│  │  → Chave Mestra de Criptografia (MEK)               │  │
-│  │  → Chave de Autenticação (AK)                       │  │
-│  └───────────────────┬──────────────────────────────────┘  │
-│                      │                                      │
-│                      ▼                                      │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │  Chaves de Criptografia por Item (envoltas com MEK) │  │
-│  │  Criptografia AES-256-GCM                            │  │
-│  └───────────────────┬──────────────────────────────────┘  │
-│                      │                                      │
-│                      ▼ (apenas blobs criptografados)       │
-└──────────────────────┼──────────────────────────────────────┘
-                       │
-                       │ HTTPS + Fixação de Certificado
-                       │
-┌──────────────────────▼──────────────────────────────────────┐
-│                     GATEWAY DE API                           │
-│  ┌────────────────────────────────────────────────────────┐ │
-│  │ • Limitação de Taxa (proteção DDoS)                   │ │
-│  │ • Validação JWT (tokens de curta duração)             │ │
-│  │ • Cabeçalhos CSP (mitigação XSS)                      │ │
-│  │ • Assinatura de Requisição (verificação integridade) │ │
-│  └────────────────────────────────────────────────────────┘ │
-└──────────────────────┬──────────────────────────────────────┘
-                       │
-                       ▼
-┌─────────────────────────────────────────────────────────────┐
-│                  SERVIDOR DE APLICAÇÃO                       │
-│  ┌────────────────────────────────────────────────────────┐ │
-│  │ • Nunca descriptografa dados (fisicamente impossível) │ │
-│  │ • Armazena apenas blobs criptografados                │ │
-│  │ • Log de auditoria (não-PII)                          │ │
-│  │ • Monitoramento de detecção de violação               │ │
-│  └────────────────────────────────────────────────────────┘ │
-└──────────────────────┬──────────────────────────────────────┘
-                       │
-                       ▼
-┌─────────────────────────────────────────────────────────────┐
-│                  BANCO DE DADOS (PostgreSQL)                 │
-│                                                              │
-│  tabela_usuarios:                                           │
-│    • email_hash (não reversível)                           │
-│    • srp_verifier (para auth, não criptografia)            │
-│    • wrapped_mek (criptografado com chave derivada senha)  │
-│                                                              │
-│  tabela_itens_cofre:                                        │
-│    • user_id (indexado)                                    │
-│    • item_type (password|card|note|file|totp)              │
-│    • encrypted_data (blob AES-256-GCM)                     │
-│    • nonce/iv                                               │
-│    • encrypted_item_key (envolta com MEK)                  │
-│    • created_at, updated_at                                │
-│                                                              │
-│  ⚠️ MESMO COM ACESSO COMPLETO AO BANCO DE DADOS:            │
-│     Atacante não pode descriptografar sem senha mestra     │
-└─────────────────────────────────────────────────────────────┘
-```
+## ✅ Funcionalidades Implementadas
 
-## 🔒 Ciclo de Vida da Criptografia
+### Segurança & Criptografia
+- ✅ Criptografia de conhecimento zero (client-side)
+- ✅ AES-256-GCM com chaves por item (wrapped com MEK)
+- ✅ Derivação de chave mestra via Argon2id (64MB memória, 3 iterações)
+- ✅ Senha mestra nunca sai do navegador
+- ✅ MEK armazenada apenas em memória (perdida ao fechar/refresh)
+- ✅ JWT com expiração curta (15 minutos)
+- ✅ Bloqueio de conta após 10 tentativas falhadas
+- ✅ Rate limiting (100 req / 15min)
+- ✅ CORS, Helmet, cabeçalhos de segurança
 
-### Fluxo de Registro
+### Autenticação
+- ✅ Registro com validação (nome, email, senha mín. 12 caracteres)
+- ✅ Login com hash bcrypt + salt individual
+- ✅ Logout com limpeza de MEK + estado
+- ✅ `apiFetch` centralizado — intercepta 401 e erros de rede → logout automático
+- ✅ Validação de sessão ao montar o app (`useSessionValidator`)
+- ✅ Redirecionamento ao login quando `masterPassword` não sobrevive refresh
 
-```
-1. Usuário insere senha mestra (mín 12 caracteres, complexidade imposta)
-2. Gerar salt aleatório (32 bytes)
-3. Derivar chaves usando Argon2id:
-   - iterações: 10
-   - memória: 64MB
-   - paralelismo: 4
-   Saída: 64 bytes de material de chave
-   - Bytes 0-31: Chave Mestra de Criptografia (MEK)
-   - Bytes 32-63: Chave de Autenticação (AK)
-   
-4. Gerar verificador SRP a partir da AK (para autenticação)
-5. Criptografar MEK com chave derivada da senha (para recuperação)
-6. Enviar ao servidor:
-   - Hash do email (HMAC-SHA256)
-   - Salt
-   - Verificador SRP
-   - MEK envolta
-   ❌ Senha mestra NUNCA é enviada
-```
+### Cofre — 8 Tipos de Item
 
-### Fluxo de Login (Autenticação SRP)
+| Tipo | Formulário | Sidebar | Criar | Visualizar | Excluir |
+|------|-----------|---------|-------|-----------|---------|
+| 🔑 Login (password) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 💳 Cartão (card) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 📝 Nota Segura (note) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 👤 Identidade (identity) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 📁 Arquivo (file) | ⚠️ Stub | ✅ | ⚠️ | ✅ | ✅ |
+| 🔐 Autenticador (totp) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 🔗 API Key (api-key) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 📜 Licença (license) | ✅ | ❌ | ✅ | ✅ | ✅ |
 
-```
-1. Usuário insere email + senha
-2. Solicitar salt do servidor (usando hash do email)
-3. Derivar MEK e AK localmente (mesmo processo Argon2id)
-4. Executar handshake SRP com AK:
-   - Servidor não pode aprender a senha
-   - Cliente não pode ser personificado
-   - Autenticação mútua
-5. Em caso de sucesso:
-   - Servidor retorna JWT (expiração 15min)
-   - Cliente armazena MEK apenas na memória (nunca persistido)
-6. Token de atualização armazenado em cookie httpOnly
-```
+> ⚠️ **Arquivo**: o formulário tem zona de drag-and-drop visual, mas o upload real não está conectado.
+>
+> ❌ **Licença**: pode ser criada, mas não aparece na sidebar (falta categoria no DashboardPage).
 
-### Fluxo de Criptografia de Dados
+### Formulário de Cartão
+- ✅ Detecção automática de bandeira por BIN (8 bandeiras: Visa, Mastercard, AMEX, Discover, Elo, Hipercard, Diners, JCB)
+- ✅ Ícone SVG da bandeira exibido dentro do input
+- ✅ Formatação automática do número (grupos de 4 dígitos)
+- ✅ Formatação de validade (MM/AA, máx. 4 dígitos)
+- ✅ CVV dinâmico (4 dígitos para AMEX, 3 para o resto)
+- ✅ Nome do titular em maiúsculas automaticamente
+- ✅ BIN ranges abrangentes (fontes: Braintree, Wikipedia, erikhenrique): ~1.400+ BINs Elo, Hipercard expandido
 
-```
-PARA CADA ITEM DO COFRE:
+### Interface
+- ✅ Sidebar colapsável com menu hamburger animado
+- ✅ Filtro por categoria + busca por nome/username
+- ✅ Tema dark/light com toggle
+- ✅ Cards com cópia, exclusão, clique para abrir detalhes
+- ✅ `ViewItemModal` — modal de visualização com campos por tipo, toggle de visibilidade, botões de copiar
+- ✅ `CreateItemModal` — modal de criação com validação e feedback visual
+- ✅ Toasts em português com gênero correto ("copiada", "copiado")
+- ✅ Fundo animado com partículas
 
-1. Gerar chave de item aleatória (256-bit)
-2. Criptografar dados do cofre:
-   texto_claro → AES-256-GCM(item_key) → texto_cifrado
-   
-3. Envolver chave do item:
-   item_key → AES-256-GCM(MEK) → wrapped_key
-   
-4. Enviar ao servidor:
-   {
-     encrypted_data: base64(texto_cifrado),
-     encrypted_key: base64(wrapped_key),
-     nonce: base64(nonce),
-     auth_tag: base64(tag)
-   }
+### API (Endpoints Reais)
 
-5. Servidor armazena blob criptografado (nunca tem texto claro ou MEK)
+| Método | Rota | Auth | Descrição |
+|--------|------|------|-----------|
+| POST | `/auth/register` | Não | Registrar novo usuário |
+| POST | `/auth/login` | Não | Login → JWT + salt |
+| GET | `/vault/items` | JWT | Listar itens (blobs criptografados) |
+| GET | `/vault/items/:id` | JWT | Obter item por ID |
+| POST | `/vault/items` | JWT | Criar item (quota: 1GB) |
+| PUT | `/vault/items/:id` | JWT | Atualizar item |
+| DELETE | `/vault/items/:id` | JWT | Soft delete |
+| GET | `/vault/stats` | JWT | Contagem por tipo + armazenamento |
 
-DESCRIPTOGRAFIA (reverso):
-1. Buscar item criptografado do servidor
-2. Desembrulhar chave do item: AES-256-GCM-DECRYPT(MEK, wrapped_key)
-3. Descriptografar dados: AES-256-GCM-DECRYPT(item_key, texto_cifrado)
-```
+---
 
-## 🛡️ Modelo de Ameaças & Mitigações
+## 📋 Changelog Recente
 
-| Ameaça | Probabilidade | Impacto | Mitigação |
-|--------|---------------|---------|-----------|
-| **Violação de Banco de Dados** | ALTA | CRÍTICO | Criptografia de conhecimento zero; dados inúteis sem senha |
-| **Ataque XSS** | MÉDIA | ALTO | CSP rigoroso, DOMPurify, proteções XSS do framework, sanitização de entrada |
-| **MITM** | MÉDIA | ALTO | Apenas HTTPS, HSTS, fixação de certificado, TLS 1.3+ |
-| **Credential Stuffing** | ALTA | MÉDIA | Limitação de taxa, CAPTCHA, detecção de violação, bloqueio de conta |
-| **Roubo de Token** | MÉDIA | ALTO | JWTs de curta duração (15min), cookies httpOnly, rotação de token |
-| **Extensão Maliciosa** | MÉDIA | CRÍTICO | Monitoramento de integridade, Web Crypto API (mais difícil de interceptar) |
-| **Ataque à Cadeia de Suprimentos** | BAIXA | CRÍTICO | Fixação de dependências, hashes SRI, auditorias automatizadas, deps mínimas |
-| **Dump de Memória** | BAIXA | ALTO | Sem persistência de texto claro, limpar dados sensíveis, usar padrões SecureString |
-| **Phishing** | ALTA | ALTO | Chaves de segurança (WebAuthn), verificação de email, rastreamento de dispositivo confiável |
-| **Fixação de Sessão** | BAIXA | MÉDIA | Regenerar sessão no login, flags de cookie seguros |
+### Fevereiro 2026
 
-## 📊 Schema do Banco de Dados
+**Detecção de Bandeiras de Cartão — BIN Ranges Abrangentes**
+- Refatorado de regex para comparação numérica com suporte a ranges `[min, max]`
+- Elo expandido de 5 para ~1.400+ BINs (13 prefixos + 15 ranges, fonte: Braintree)
+- Hipercard expandido de 2 para 9 prefixos (inclui família Hiper)
+- Discover: adicionado range `644–649` que faltava
+- Diners: adicionado prefixo `39`
+- Mastercard 2-series simplificado para `[2221, 2720]`
+- **Ordem de detecção corrigida**: Elo/Hipercard verificados antes de Visa/Discover para evitar falsos positivos em BINs sobrepostos
 
-```sql
--- Tabela de usuários (apenas autenticação)
-CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    email_hash VARCHAR(64) UNIQUE NOT NULL,  -- HMAC-SHA256 do email
-    salt BYTEA NOT NULL,                     -- Para Argon2id
-    srp_verifier TEXT NOT NULL,              -- Autenticação SRP
-    wrapped_mek BYTEA NOT NULL,              -- MEK criptografada com senha
-    mfa_enabled BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
+**Gerenciamento de Sessão (`apiFetch`)**
+- Criado `apps/web/src/lib/api.ts` com wrapper centralizado para todas as chamadas à API
+- Intercepta respostas 401 → logout automático + limpeza de MEK + toast + redirecionamento
+- Intercepta erros de rede (servidor offline) → mesmo tratamento quando token existe
+- Substituídos todos os `fetch()` manuais em `useVault.ts` por `apiFetch()`
+- Adicionado `useSessionValidator()` em `App.tsx` — valida token ao montar
+- `DashboardPage`: detecta `masterPassword` ausente (refresh) → força re-login
 
--- Itens do cofre (todos criptografados)
-CREATE TABLE vault_items (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    item_type VARCHAR(20) NOT NULL,          -- password|card|note|file|totp|identity
-    encrypted_data BYTEA NOT NULL,           -- Texto cifrado AES-256-GCM
-    encrypted_key BYTEA NOT NULL,            -- Chave do item envolta com MEK
-    nonce BYTEA NOT NULL,                    -- Nonce GCM
-    auth_tag BYTEA NOT NULL,                 -- Tag de autenticação GCM
-    metadata JSONB,                          -- Metadados criptografados (ex: categoria, tags)
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW(),
-    INDEX idx_user_items (user_id, item_type)
-);
+**ViewItemModal**
+- Novo componente para visualização detalhada de itens
+- Mesmas dimensões do `CreateItemModal` (40rem × 28rem mín.)
+- Campos específicos por tipo com toggle de visibilidade para segredos
+- Botões de copiar em cada campo
+- Sub-componentes reutilizáveis: `FieldRow`, `SecretRow`, `NotesBlock`
 
--- Log de auditoria (preservando privacidade)
-CREATE TABLE audit_log (
-    id BIGSERIAL PRIMARY KEY,
-    user_id UUID REFERENCES users(id),
-    action VARCHAR(50) NOT NULL,             -- login|logout|create_item|delete_item
-    ip_address INET,
-    user_agent TEXT,
-    success BOOLEAN,
-    timestamp TIMESTAMP DEFAULT NOW()
-);
+**Formulário de Cartão**
+- Detecção de bandeira por BIN com ícones SVG externos (`aaronfagan/svg-credit-card-payment-icons`)
+- Ícone exibido dentro do input (lado direito)
+- Formatação automática: número (4 em 4), validade (MM/AA), CVV dinâmico
+- Nome do titular auto-uppercase
+- Renomeado: "American Express" → "AMEX", "Diners Club" → "Diners"
 
--- Sessões (para blacklist de JWT)
-CREATE TABLE sessions (
-    id UUID PRIMARY KEY,
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    refresh_token_hash VARCHAR(64) UNIQUE,
-    expires_at TIMESTAMP NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW()
-);
+**Correções**
+- Cópia de senha retornava literal `'senha-aqui'` → agora usa `item.plaintext.password`
+- Toast grammar: "copiado" → "copiada" para substantivos femininos
+- `e.stopPropagation()` em todos os botões interativos do VaultItemCard
+- Fix Vite warning: import dinâmico → import estático de `useVault` em `api.ts`
 
--- Acesso de emergência / Interruptor de homem morto
-CREATE TABLE emergency_contacts (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    contact_email_hash VARCHAR(64) NOT NULL,
-    waiting_period_days INTEGER DEFAULT 30,
-    encrypted_recovery_key BYTEA NOT NULL,   -- Chave envolta para acesso de emergência
-    status VARCHAR(20) DEFAULT 'active'
-);
-```
+---
 
-## 🚀 Início Rápido
+## 🖥️ Executando Localmente
 
 ### Pré-requisitos
+- **Node.js** 20+ (`node --version`)
+- **npm** 10+ (`npm --version`)
+- **PostgreSQL** 15+ rodando localmente
 
-- Node.js 20+
-- PostgreSQL 15+
-- Redis 7+
-- Docker & Docker Compose
+### Passo a Passo
 
-### Configuração de Desenvolvimento
+```powershell
+# 1. Clonar e instalar dependências
+git clone <repo-url> ZeroGuard
+cd ZeroGuard
+npm install
 
-```bash
-# Instalar dependências
-cd apps/web && npm install
-cd ../api && npm install
+# 2. Criar banco de dados
+psql -U postgres -c "CREATE DATABASE zeroguard;"
 
-# Iniciar infraestrutura
-docker-compose up -d
+# 3. Configurar variáveis de ambiente da API
+cd apps/api
+# Criar arquivo .env com:
+#   DATABASE_URL=postgresql://postgres:SUA_SENHA@localhost:5432/zeroguard
+#   JWT_SECRET=uma-chave-secreta-longa-aqui
+#   PORT=3001
+#   CORS_ORIGIN=http://localhost:5173
 
-# Executar migrações
-cd apps/api && npm run migrate
+# 4. Aplicar schema no banco
+psql -U postgres -d zeroguard -f src/db/schema.sql
 
-# Iniciar servidores de desenvolvimento
-npm run dev  # Executa tanto web quanto API
+# 5. Voltar à raiz e iniciar tudo
+cd ../..
+npm run dev
 ```
 
-### Variáveis de Ambiente
+O **frontend** abre em `http://localhost:5173` e a **API** roda em `http://localhost:3001`.
+
+### Scripts Disponíveis
+
+| Comando | Descrição |
+|---------|-----------|
+| `npm run dev` | Inicia web + api em paralelo (concurrently) |
+| `npm run dev:web` | Apenas o frontend (Vite) |
+| `npm run dev:api` | Apenas a API (tsx watch) |
+| `npm run build` | Compila web + api para produção |
+| `npm run start` | Inicia API compilada (`node dist/server.js`) |
+| `npm run prod` | Compila web e inicia API em dev |
+
+---
+
+## 🚀 Executando em Produção
+
+### Opção 1 — Docker Compose (PostgreSQL + Redis)
+
+O `docker-compose.yml` sobe PostgreSQL e Redis prontos para uso:
+
+```powershell
+# Subir banco e cache
+docker-compose up -d postgres redis
+
+# Aplicar schema
+psql -h localhost -U vault_user -d zeroguard -f apps/api/src/db/schema.sql
+
+# Compilar e iniciar a aplicação
+npm run build
+npm run start
+```
+
+### Opção 2 — Deploy Manual (VPS / Cloud)
+
+#### 1. Banco de Dados
+
+Usar PostgreSQL gerenciado (Supabase, Neon, Railway) ou instalar em VPS:
+
+```sql
+CREATE DATABASE zeroguard;
+CREATE USER zeroguard_user WITH PASSWORD 'SENHA_MUITO_FORTE';
+GRANT ALL PRIVILEGES ON DATABASE zeroguard TO zeroguard_user;
+```
+
+Aplicar schema:
+```bash
+psql -h HOST -U zeroguard_user -d zeroguard -f apps/api/src/db/schema.sql
+```
+
+#### 2. Backend (API Fastify)
 
 ```bash
-# API (.env)
-DATABASE_URL=postgresql://vault:secret@localhost:5432/zeroguard
-REDIS_URL=redis://localhost:6379
-JWT_SECRET=<use-vault-ou-gerenciador-de-segredos>
-RATE_LIMIT_MAX=100
-RATE_LIMIT_WINDOW=900000
-
-# Web (.env)
-VITE_API_URL=https://api.zeroguard.io
-VITE_ENABLE_ANALYTICS=false
+cd apps/api
+npm install --production
+npm run build
 ```
+
+Variáveis de ambiente obrigatórias:
+```bash
+DATABASE_URL=postgresql://user:pass@host:5432/zeroguard
+JWT_SECRET=<string-aleatória-64-chars-mínimo>
+PORT=3001
+CORS_ORIGIN=https://seu-dominio.com
+NODE_ENV=production
+```
+
+Iniciar:
+```bash
+node dist/server.js
+# Ou com PM2:
+pm2 start dist/server.js --name zeroguard-api
+```
+
+#### 3. Frontend (Build Estático)
+
+```bash
+cd apps/web
+VITE_API_URL=https://api.seu-dominio.com npm run build
+# Resultado em: apps/web/dist/ — servir com Nginx, Vercel, Netlify, etc.
+```
+
+#### 4. Plataformas Recomendadas
+
+| Serviço | Plataforma | Custo |
+|---------|-----------|-------|
+| **Frontend** | Vercel ou Netlify | Gratuito |
+| **API** | Render ou Railway | $0–7/mês |
+| **Banco** | Supabase ou Neon | Gratuito (até 500MB–3GB) |
+
+**Custo total estimado:** $0–27/mês
+
+#### 5. Deploy no Vercel (Frontend)
+
+```bash
+vercel --prod
+# Root Directory = apps/web
+# Build Command = npm run build
+# Output Directory = dist
+```
+
+O `vercel.json` já está configurado com rewrites SPA.
+
+#### 6. Deploy no Render (API)
+
+Usar o `render.yaml` existente ou configurar manualmente:
+- **Build Command:** `cd apps/api && npm install && npm run build`
+- **Start Command:** `cd apps/api && node dist/server.js`
+- **Variáveis:** `DATABASE_URL`, `JWT_SECRET`, `CORS_ORIGIN`, `NODE_ENV=production`
+
+---
+
+## 🔒 Arquitetura de Segurança
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                     NAVEGADOR (Cliente)                       │
+│                                                              │
+│  Senha Mestra → Argon2id (64MB, 3 iter, 4 threads)          │
+│       ├── MEK (Chave Mestra de Criptografia) [memória]      │
+│       └── AK  (Chave de Autenticação) [bcrypt no servidor]  │
+│                                                              │
+│  Para cada item:                                             │
+│    1. Gerar chave AES-256-GCM aleatória (item key)          │
+│    2. Criptografar dados com item key                        │
+│    3. Envolver item key com MEK (key wrapping)               │
+│    4. Enviar ao servidor: blob criptografado + wrapped key   │
+│                                                              │
+│  ⚠️ MEK nunca é enviada ao servidor                          │
+│  ⚠️ Dados em texto claro nunca saem do navegador             │
+└──────────────────────────────────────────────────────────────┘
+                       │ HTTPS
+                       ▼
+┌──────────────────────────────────────────────────────────────┐
+│                     SERVIDOR (API Fastify)                    │
+│  • Armazena apenas blobs criptografados                      │
+│  • Autenticação via JWT (15min expiração)                    │
+│  • Rate limiting + CORS + Helmet                             │
+│  • Log de auditoria (sem dados pessoais)                     │
+│  • IMPOSSÍVEL descriptografar sem a senha mestra             │
+└──────────────────────────────────────────────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────────────────────┐
+│                  POSTGRESQL                                   │
+│  users: email_hash, salt, srp_verifier (bcrypt), wrapped_mek │
+│  vault_items: encrypted_data, encrypted_key, nonce, auth_tag │
+│  audit_log: ações registradas sem dados sensíveis            │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### Modelo de Ameaças
+
+| Ameaça | Mitigação |
+|--------|-----------|
+| Vazamento do banco de dados | Dados criptografados — inúteis sem a senha mestra |
+| Ataque XSS | CSP rigoroso, sanitização, framework React |
+| Man-in-the-Middle | HTTPS obrigatório, HSTS |
+| Credential Stuffing | Rate limiting, bloqueio após 10 tentativas |
+| Roubo de Token | JWT curto (15min), limpeza automática |
+| Refresh da página | MEK perdida, exige re-login (by design) |
+
+---
 
 ## 📁 Estrutura do Projeto
 
 ```
-vault/
+ZeroGuard/
 ├── apps/
-│   ├── web/                    # Frontend React
+│   ├── api/                        # Backend Fastify
 │   │   ├── src/
-│   │   │   ├── crypto/         # Primitivas de criptografia
-│   │   │   ├── auth/           # Lógica de autenticação
-│   │   │   ├── vault/          # Componentes do cofre
-│   │   │   ├── components/     # Componentes de UI
-│   │   │   └── hooks/          # Hooks React
+│   │   │   ├── server.ts           # Entrada principal
+│   │   │   ├── config.ts           # Configurações + env vars
+│   │   │   ├── db/
+│   │   │   │   ├── client.ts       # Conexão PostgreSQL (lib postgres)
+│   │   │   │   └── schema.sql      # Schema completo do banco
+│   │   │   ├── routes/
+│   │   │   │   ├── index.ts        # Auth routes (register, login)
+│   │   │   │   └── vault.ts        # CRUD do cofre
+│   │   │   └── middleware/
+│   │   │       ├── security.ts     # JWT, rate limit, CORS
+│   │   │       ├── logging.ts      # Logs estruturados
+│   │   │       └── errors.ts       # Handler de erros
 │   │   └── package.json
 │   │
-│   └── api/                    # Backend Fastify
+│   └── web/                        # Frontend React
 │       ├── src/
-│       │   ├── routes/         # Endpoints da API
-│       │   ├── middleware/     # Middleware de segurança
-│       │   ├── services/       # Lógica de negócio
-│       │   ├── db/             # Camada de banco de dados
-│       │   └── utils/          # Utilitários
+│       │   ├── App.tsx             # Rotas + useSessionValidator
+│       │   ├── main.tsx            # Entrada React
+│       │   ├── components/
+│       │   │   ├── ui/             # Componentes base (Button, Input, GlassCard)
+│       │   │   └── vault/
+│       │   │       ├── CreateItemModal.tsx   # Modal de criação (8 tipos)
+│       │   │       ├── ViewItemModal.tsx     # Modal de visualização
+│       │   │       └── VaultItemCard.tsx     # Card na grid
+│       │   ├── crypto/
+│       │   │   ├── core.ts         # Argon2id, AES-256-GCM, key derivation
+│       │   │   ├── password.ts     # Gerador/avaliador de senhas
+│       │   │   └── totp.ts         # Geração TOTP
+│       │   ├── hooks/
+│       │   │   ├── useAuth.ts      # Zustand: login, register, logout
+│       │   │   ├── useVault.ts     # Zustand: MEK, encrypt/decrypt, CRUD
+│       │   │   └── useTheme.ts     # Dark/light mode
+│       │   ├── lib/
+│       │   │   ├── api.ts          # apiFetch() — wrapper com interceptors
+│       │   │   └── utils.ts        # Utilitários
+│       │   ├── pages/
+│       │   │   ├── LoginPage.tsx
+│       │   │   ├── RegisterPage.tsx
+│       │   │   └── DashboardPage.tsx
+│       │   ├── vault/
+│       │   │   ├── service.ts      # VaultService: encrypt/decrypt
+│       │   │   ├── types.ts        # Interfaces TypeScript (8 tipos)
+│       │   │   └── fileUpload.ts   # Stub de upload
+│       │   └── styles/
+│       │       └── globals.css     # Tailwind directives
 │       └── package.json
 │
-├── packages/
-│   ├── shared/                 # Tipos/utils compartilhados
-│   └── crypto/                 # Utilitários de criptografia compartilhados
-│
-├── infrastructure/
-│   ├── docker/
-│   ├── k8s/
-│   └── terraform/
-│
-└── docs/
-    ├── SECURITY.md
-    ├── THREAT_MODEL.md
-    └── API.md
+├── docs/                           # Documentação técnica
+├── scripts/                        # Scripts de setup/deploy
+├── docker-compose.yml              # PostgreSQL + Redis
+├── vercel.json                     # Config Vercel (SPA)
+├── render.yaml                     # Config Render (API)
+└── package.json                    # Monorepo root
 ```
-
-## 🔐 Melhores Práticas de Segurança Implementadas
-
-- ✅ Criptografia de conhecimento zero (apenas no cliente)
-- ✅ Derivação de chave Argon2id (memória-pesada)
-- ✅ Criptografia autenticada AES-256-GCM
-- ✅ Autenticação SRP (senha nunca transmitida)
-- ✅ JWTs de curta duração (15 minutos)
-- ✅ Limitação de taxa e proteção DDoS
-- ✅ Política de Segurança de Conteúdo rigorosa
-- ✅ HSTS e cabeçalhos de segurança
-- ✅ Validação e sanitização de entrada
-- ✅ Prevenção de injeção SQL (consultas parametrizadas)
-- ✅ Log de auditoria (preservando privacidade)
-- ✅ Varredura de segurança automatizada (dependabot, snyk)
-- ✅ Testes de penetração regulares
-- ✅ Plano de resposta a incidentes
-
-## 📍c Prontidão para Conformidade
-
-- **SOC 2 Tipo II**: Log de auditoria, controles de acesso
-- **GDPR**: Portabilidade de dados, direito ao esquecimento, minimização de dados
-- **HIPAA**: Criptografia PHI, trilhas de auditoria (se armazenando registros de saúde)
-- **PCI DSS**: Se lidando com cartões de pagamento (armazenamento criptografado de cartões)
-
-## 🧪 Estratégia de Testes
-
-- Testes unitários: Cobertura de 80%+
-- Testes de integração: Endpoints da API
-- Testes E2E: Fluxos críticos do usuário (Playwright)
-- Testes de segurança: OWASP ZAP, Burp Suite
-- Testes de penetração: Trimestralmente por empresa externa
-- Auditorias de criptografia: Revisão anual por especialistas em criptografia
-
-## 📈 Monitoramento & Observabilidade
-
-- **Desempenho**: Tempos de resposta, consultas ao banco de dados
-- **Segurança**: Tentativas de login falhadas, padrões de acesso incomuns
-- **Negócios**: Crescimento de usuários, criação de itens do cofre
-- **Alertas**: Detecção de anomalias, indicadores de violação
-
-## 🚀 Início Rápido (Resumo)
-
-### Desenvolvimento
-```bash
-# 1. Instalar dependências
-npm install
-
-# 2. Configurar banco de dados
-cd apps/api
-cp .env.example .env
-# Editar .env com suas configurações
-
-# 3. Executar migrations
-npm run prisma:migrate:dev
-
-# 4. Iniciar backend
-npm run dev
-
-# 5. Iniciar frontend (nova janela)
-cd apps/web
-npm run dev
-```
-
-Acesse: http://localhost:3000
-
-📚 **Documentação:**
-- 🏠 **[LOCAL_SETUP.md](./LOCAL_SETUP.md)** - Setup completo passo a passo (recomendado para iniciantes)
-- ⚡ **[QUICK_START.md](./QUICK_START.md)** - Guia rápido de desenvolvimento
-
-### Deploy em Produção
-
-**Documentação Completa:**
-- 📖 **[PRODUCTION.md](./PRODUCTION.md)** - Guia completo de configuração
-- ✅ **[DEPLOY_CHECKLIST.md](./DEPLOY_CHECKLIST.md)** - Checklist passo a passo
-- 🔐 **[AUTHENTICATION.md](./apps/web/AUTHENTICATION.md)** - Sistema de autenticação
-
-**Deploy Rápido:**
-```powershell
-# 1. Gerar secrets
-.\scripts\generate-secrets.ps1
-
-# 2. Configurar ambiente
-cp apps/api/.env.production.example apps/api/.env.production
-cp apps/web/.env.production.example apps/web/.env.production
-
-# 3. Verificar configurações
-.\scripts\pre-deploy-check.ps1
-
-# 4. Deploy
-vercel --prod  # Frontend
-# Backend: usar Render/Railway (ver PRODUCTION.md)
-```
-
-**Plataformas Recomendadas:**
-- Frontend: Vercel (Free) ou Netlify (Free)
-- Backend: Render ($7/mês) ou Railway ($5/mês)
-- Database: Supabase (Free) ou Neon (Free)
-
-**Custo Total:** ~$1-27/mês dependendo do plano
 
 ---
 
-## 🔄 Backup & Recuperação de Desastres
+## ⚙️ Variáveis de Ambiente
 
-- **Banco de Dados**: Backup contínuo com recuperação point-in-time
-- **Chaves de Criptografia**: Nunca são armazenadas em backup em texto claro
-- **Dados do Usuário**: Recurso de exportação de backup criptografado
-- **RPO**: < 1 hora
-- **RTO**: < 4 horas
+### API (`apps/api/.env`)
 
-## 🌐 Arquitetura de Implantação
+| Variável | Obrigatória | Default | Descrição |
+|----------|-------------|---------|-----------|
+| `DATABASE_URL` | ✅ | `postgresql://vault_user:password@localhost:5432/zeroguard` | Conexão PostgreSQL |
+| `JWT_SECRET` | ✅ | `CHANGE_THIS_IN_PRODUCTION` | Segredo para assinar JWTs |
+| `PORT` | Não | `3001` | Porta da API |
+| `CORS_ORIGIN` | Não | `http://localhost:3001` | Origem permitida para CORS |
+| `NODE_ENV` | Não | `development` | Ambiente |
+| `REDIS_URL` | Não | — | URL do Redis (opcional) |
 
-```
-[CloudFlare] → [Balanceador de Carga] → [Servidores API (Auto-scaling)]
-                                      ↓
-                               [PostgreSQL Primário]
-                                      ↓
-                            [Réplicas de Leitura PostgreSQL]
-                                      
-[Cluster Redis] ← [Gerenciamento de Sessão]
-[HashiCorp Vault] ← [Gerenciamento de Segredos]
-```
+### Web (`apps/web/.env`)
 
-## 📞 Contato de Segurança
-
-- **Reportar vulnerabilidades**: security@zeroguard.io
-- **Chave PGP**: [Ver SECURITY.md]
-- **Bug Bounty**: Programa HackerOne (em breve)
+| Variável | Obrigatória | Default | Descrição |
+|----------|-------------|---------|-----------|
+| `VITE_API_URL` | Não | `http://localhost:3001` | URL base da API |
 
 ---
 
-**Licença**: MIT (modificar para uso em produção)
-**Versão**: 1.0.0-alpha
-**Última Auditoria de Segurança**: [Data]
+## 📌 TODO — O que Falta
+
+Veja [ROADMAP.md](./ROADMAP.md) para a lista completa e priorizada.
+
+---
+
+## 📖 Documentação Adicional
+
+| Guia | Descrição |
+|------|-----------|
+| [START_HERE.md](./START_HERE.md) | Ponto de partida para novos contribuidores |
+| [LOCAL_SETUP.md](./LOCAL_SETUP.md) | Setup local detalhado passo a passo |
+| [PRODUCTION.md](./PRODUCTION.md) | Guia completo de deploy em produção |
+| [ROADMAP.md](./ROADMAP.md) | Roadmap + TODO list detalhado |
+| [QUICK_START.md](./QUICK_START.md) | Guia rápido |
+| [FAQ.md](./FAQ.md) | Perguntas frequentes |
+| [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | Arquitetura técnica |
+| [docs/THREAT_MODEL.md](./docs/THREAT_MODEL.md) | Modelo de ameaças |
+| [docs/API.md](./docs/API.md) | Documentação da API REST |
+
+---
+
+**Licença:** MIT  
+**Versão:** 0.9.0-alpha

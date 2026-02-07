@@ -3,30 +3,30 @@
 Write-Host "🔐 Gerando secrets para produção..." -ForegroundColor Cyan
 Write-Host ""
 
-function Generate-Secret {
+function New-Secret {
     $bytes = New-Object byte[] 32
     [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes)
     return [Convert]::ToBase64String($bytes)
 }
 
 Write-Host "JWT_SECRET:" -ForegroundColor Yellow
-Generate-Secret
+New-Secret
 Write-Host ""
 
 Write-Host "JWT_REFRESH_SECRET:" -ForegroundColor Yellow
-Generate-Secret
+New-Secret
 Write-Host ""
 
 Write-Host "ENCRYPTION_KEY:" -ForegroundColor Yellow
-Generate-Secret
+New-Secret
 Write-Host ""
 
 Write-Host "CSRF_SECRET:" -ForegroundColor Yellow
-Generate-Secret
+New-Secret
 Write-Host ""
 
 Write-Host "SESSION_SECRET:" -ForegroundColor Yellow
-Generate-Secret
+New-Secret
 Write-Host ""
 
 Write-Host "✅ Secrets geradas com sucesso!" -ForegroundColor Green

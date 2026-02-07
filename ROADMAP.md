@@ -1,386 +1,238 @@
-# 🗺️ ROTEIRO & RECURSOS FUTUROS
+# 🗺️ ROADMAP & TODO LIST — ZeroGuard
 
-## Versão Atual: 1.0.0 (MVP)
+> **Última atualização:** Fevereiro 2026  
+> **Versão atual:** 0.9.0-alpha
 
-### ✅ Recursos Implementados
-
-**Segurança Central**:
-- ✅ Criptografia de conhecimento zero no cliente
-- ✅ Criptografia autenticada AES-256-GCM
-- ✅ Derivação de chaves Argon2id
-- ✅ Protocolo de autenticação SRP
-- ✅ Autenticaç ão multifator (TOTP)
-- ✅ Códigos de backup
-
-**Tipos de Cofre**:
-- ✅ Gerenciador de senhas
-- ✅ Cofre de cartões de pagamento
-- ✅ Notas seguras
-- ✅ Documentos de identidade
-- ✅ Armazenamento de arquivos (criptografado)
-- ✅ Autenticador TOTP
-- ✅ Chaves de API
-- ✅ Chaves de licença
-
-**Experiência do Usuário**:
-- ✅ Verificador de força de senha
-- ✅ Gerador seguro de senhas
-- ✅ Detecção de vazamentos (integração HIBP)
-- ✅ Painel de segurança
-- ✅ Log de auditoria
-- ✅ Gerenciamento de sessões
-
-**Infraestrutura**:
-- ✅ API RESTful
-- ✅ Banco de dados PostgreSQL
-- ✅ Cache Redis
-- ✅ Limitação de taxa
-- ✅ Registro abrangente
+Este documento lista **o que já está funcionando**, **o que precisa ser feito** para chegar à v1.0, e **ideias futuras**. Itens marcados com ✅ estão implementados e testados. Itens com ❌ não existem. Itens com ⚠️ existem parcialmente.
 
 ---
 
-## Versão 1.1.0 - T2 2026 (UX Melhorada)
+## ✅ O que Já Funciona (v0.9.0-alpha)
 
-### 🎯 Objetivos
-- Melhorar experiência do usuário
-- Adicionar integração com navegador
-- Busca aprimorada
+### Autenticação
+- ✅ Registro (nome, email, senha mín. 12 chars, bcrypt via pgcrypto)
+- ✅ Login com JWT (15min expiração)
+- ✅ Logout com limpeza de MEK + estado + redirecionamento
+- ✅ `apiFetch` centralizado — intercepta 401 e erros de rede → logout automático
+- ✅ Validação de sessão ao montar o app
+- ✅ Redirecionamento ao login quando MEK não sobrevive refresh da página
+- ✅ Bloqueio de conta após 10 tentativas falhadas
+- ✅ Rate limiting (100 req / 15min)
 
-### Recursos
+### Criptografia
+- ✅ Conhecimento zero — criptografia/descriptografia 100% no navegador
+- ✅ AES-256-GCM com chaves por item
+- ✅ Key wrapping (item key envolta com MEK)
+- ✅ Argon2id para derivação de chave (64MB, 3 iter, 4 threads)
+- ✅ Salt individual por usuário
+- ✅ MEK apenas em memória (nunca persistida)
 
-**Extensão para Navegador**:
-- [ ] Extensão Chrome
-- [ ] Extensão Firefox
+### Cofre — CRUD
+- ✅ Criar itens (8 tipos) com criptografia client-side
+- ✅ Listar itens com descriptografia local
+- ✅ Visualizar item detalhado (ViewItemModal)
+- ✅ Excluir item (soft delete)
+- ✅ Quota de armazenamento (1GB free tier)
+
+### Formulários Completos
+- ✅ **Login**: nome, username/email, senha (com medidor de força), URL, notas
+- ✅ **Cartão**: número (detecção de bandeira + ícone SVG), validade, CVV dinâmico, titular
+- ✅ **Nota Segura**: título + conteúdo (textarea monospace)
+- ✅ **Identidade**: nome, CPF/documento, email, telefone, notas
+- ✅ **Autenticador (TOTP)**: nome do serviço, segredo TOTP, conta/email, notas
+- ✅ **API Key**: nome, chave API, URL/endpoint, notas
+- ✅ **Licença**: nome do software, chave de licença, email da conta, notas
+- ⚠️ **Arquivo**: zona de drag-and-drop visual (stub — upload real não conectado)
+
+### Interface
+- ✅ Sidebar colapsável com hamburger animado
+- ✅ Filtro por categoria e busca por texto
+- ✅ Tema dark/light
+- ✅ Cards com cópia, exclusão, abrir detalhes
+- ✅ ViewItemModal com toggle de visibilidade + copiar
+- ✅ CreateItemModal com validação e feedback visual
+- ✅ Toasts em português (gênero gramatical correto)
+- ✅ Fundo com partículas animadas
+
+### Detecção de Bandeiras (Cartão)
+- ✅ Visa, Mastercard, AMEX, Discover, Elo, Hipercard, Diners, JCB
+- ✅ ~1.400+ BINs Elo (13 prefixos + 15 ranges)
+- ✅ 9 prefixos Hipercard (inclui família Hiper)
+- ✅ Comparação numérica (não regex) com ordem correta de detecção
+
+---
+
+## 🔴 Pendências Críticas (para v1.0)
+
+### 1. Categoria "Licença" na Sidebar
+- **Problema:** O tipo `license` pode ser criado, mas **não aparece na sidebar** do DashboardPage
+- **Solução:** Adicionar `{ id: 'license', name: 'Licenças', icon: Shield }` ao array de categorias
+- **Arquivo:** `apps/web/src/pages/DashboardPage.tsx`
+- **Esforço:** 5 minutos
+
+### 2. Upload Real de Arquivos
+- **Problema:** O formulário de "Arquivo" tem uma zona de drag-and-drop, mas sem handler de upload conectado
+- **O que falta:**
+  - [ ] Conectar input file ao estado do formulário
+  - [ ] Criptografar arquivo no client-side antes de enviar
+  - [ ] Criar endpoint `POST /vault/files` na API (tabela `files` já existe no schema)
+  - [ ] Implementar download + descriptografia
+  - [ ] Respeitar limite de tamanho (50MB definido no config)
+- **Arquivos:** `CreateItemModal.tsx`, `vault.ts` (API), `useVault.ts`
+- **Esforço:** 1–2 dias
+
+### 3. Edição de Itens
+- **Problema:** O endpoint `PUT /vault/items/:id` existe na API, mas não há UI de edição
+- **O que falta:**
+  - [ ] Criar `EditItemModal` ou reutilizar `CreateItemModal` em modo edição
+  - [ ] Botão "Editar" no ViewItemModal e/ou VaultItemCard
+  - [ ] Re-criptografar dados ao salvar edição
+  - [ ] Chamar `PUT /vault/items/:id` via `apiFetch`
+- **Esforço:** 1 dia
+
+### 4. Gerador de Senhas
+- **Problema:** O botão "Gerar senha forte" no formulário de login não tem handler
+- **O que falta:**
+  - [ ] Conectar botão ao `generatePassword()` de `crypto/password.ts` (que já existe)
+  - [ ] Preencher o campo de senha com a senha gerada
+  - [ ] Atualizar medidor de força
+- **Arquivo:** `CreateItemModal.tsx`
+- **Esforço:** 30 minutos
+
+---
+
+## 🟡 Pendências Importantes (v1.1)
+
+### 5. Refresh Token
+- **Problema:** Não há rotação de refresh token — ao expirar o JWT (15min), o usuário é forçado a re-logar
+- **O que falta:**
+  - [ ] Endpoint `POST /auth/refresh` na API
+  - [ ] Armazenar refresh token em cookie httpOnly
+  - [ ] Renovar JWT automaticamente antes de expirar
+  - [ ] Revogar refresh token no logout
+  - [ ] Tabela `sessions` já existe no schema — usar ela
+- **Esforço:** 1 dia
+
+### 6. Melhorias nos Formulários
+
+#### Identidade
+O formulário atual coleta apenas: nome, documento, email, telefone, notas.
+- [ ] Adicionar: data de nascimento, endereço completo (rua, cidade, estado, CEP)
+- [ ] Validação de CPF (algoritmo de dígitos verificadores)
+- [ ] Máscara de CPF (XXX.XXX.XXX-XX)
+- [ ] Máscara de telefone (+55 (XX) XXXXX-XXXX)
+
+#### Autenticador (TOTP)
+O formulário atual coleta: nome do serviço, segredo, conta, notas.
+- [ ] Leitor de QR Code para importar segredo automaticamente
+- [ ] Exibir código TOTP rotativo em tempo real no ViewItemModal
+- [ ] Botão "Copiar código atual" com contagem regressiva
+- [ ] Validar formato do segredo (Base32)
+
+#### API Key
+O formulário atual coleta: nome, chave, endpoint, notas.
+- [ ] Campo para headers customizados
+- [ ] Tipo de autenticação (Bearer, Basic, API Key header)
+- [ ] Ambiente (produção, staging, dev)
+- [ ] Data de expiração
+
+#### Arquivo
+- [ ] Preview de imagens após upload
+- [ ] Ícone por tipo de arquivo (PDF, DOC, imagem, etc.)
+- [ ] Exibir tamanho do arquivo
+- [ ] Progress bar durante upload
+
+### 7. Alteração de Senha Mestra
+- [ ] Endpoint `PUT /auth/password` na API
+- [ ] Re-derivar MEK com nova senha
+- [ ] Re-envolver todas as chaves de item (`reEncryptItemKeys()` já existe no VaultService)
+- [ ] Invalidar todas as sessões
+
+### 8. Painel de Segurança
+- **Problema:** Os stats `weak_passwords` e `exposed_passwords` estão hardcoded em 0
+- **O que falta:**
+  - [ ] Conectar `VaultSecurityAnalyzer` (já implementado) à UI
+  - [ ] Mostrar: senhas fracas, reutilizadas, antigas, comprometidas (HIBP)
+  - [ ] Score de segurança geral
+- **Esforço:** 1 dia
+
+---
+
+## 🟢 Melhorias Futuras (v1.2+)
+
+### Interface & UX
+- [ ] Favoritos / itens fixados
+- [ ] Ordenação por nome, data, tipo
+- [ ] Paginação ou scroll infinito para grandes volumes
+- [ ] Atalhos de teclado (Ctrl+N novo item, Ctrl+K busca)
+- [ ] Animações de transição entre modais
+- [ ] Tela de configurações (alterar email, nome, senha, exportar dados)
+- [ ] Confirmação visual ao criar/excluir (animação de sucesso)
+- [ ] Acessibilidade (ARIA labels, foco correto nos modais)
+
+### Importar / Exportar
+- [ ] Exportar cofre criptografado (backup)
+- [ ] Importar backup criptografado
+- [ ] Importar CSV (1Password, Bitwarden, LastPass, KeePass)
+- [ ] Exportar CSV (texto claro, com aviso de segurança)
+- [ ] `VaultService.exportVault()` e `importVault()` já existem — falta UI
+
+### Segurança Avançada
+- [ ] MFA / 2FA com TOTP (colunas `mfa_enabled` e `mfa_secret_encrypted` já existem)
+- [ ] Monitoramento de vazamentos (HIBP API)
+- [ ] Detecção de senhas reutilizadas
+- [ ] Notificação de senhas antigas (>90 dias)
+- [ ] Histórico de senhas por item
+
+### Infraestrutura
+- [ ] Dockerfiles para API e Web (referenciados no docker-compose mas não existem)
+- [ ] Nginx config para produção (referenciado mas não existe)
+- [ ] CI/CD (GitHub Actions)
+- [ ] Testes unitários e E2E
+- [ ] Monitoramento de saúde / healthcheck endpoint
+
+### Extensão para Navegador
+- [ ] Extensão Chrome/Firefox
 - [ ] Preenchimento automático de credenciais
-- [ ] Integração com menu de contexto
-- [ ] Gerador de senha com um clique
+- [ ] Salvar credenciais ao criar conta em sites
+- [ ] Gerador de senha integrado
 
-**Busca & Organização**:
-- [ ] Busca de texto completo (metadados criptografados)
-- [ ] Organização por pastas
-- [ ] Tags e categorias
-- [ ] Itens favoritos/fixados
-- [ ] Itens usados recentemente
-
-**Importar/Exportar**:
-- [ ] Importar do 1Password
-- [ ] Importar do Bitwarden
-- [ ] Importar do LastPass
-- [ ] Importar do KeePass
-- [ ] Importar/exportar CSV
-
-**Segurança Aprimorada**:
-- [ ] Monitoramento de saúde de senhas
-- [ ] Monitoramento automático de vazamentos
-- [ ] Melhorias na pontuação de segurança
-- [ ] Monitoramento da dark web
+### Aplicativo Móvel
+- [ ] App iOS e Android (React Native ou nativo)
+- [ ] Desbloqueio biométrico (Face ID, Touch ID, impressão digital)
+- [ ] Preenchimento automático no mobile
+- [ ] Modo offline com sincronização
 
 ---
 
-## Versão 1.2.0 - T3 2026 (Colaboração)
+## 🐛 Bugs & Inconsistências Conhecidas
 
-### 🎯 Objetivos
-- Habilitar compartilhamento seguro
-- Planos para equipes/famílias
-- Recursos empresariais
-
-### Recursos
-
-**Compartilhamento & Colaboração**:
-- [ ] Compartilhamento seguro de itens
-- [ ] Pastas compartilhadas
-- [ ] Permissões granulares (visualizar/editar/compartilhar)
-- [ ] Expiração de compartilhamento
-- [ ] Revogação de compartilhamento
-
-**Recursos para Equipes**:
-- [ ] Cofres de equipe
-- [ ] Controle de acesso baseado em função (RBAC)
-- [ ] Painel de administração
-- [ ] Gerenciamento de usuários
-- [ ] Monitoramento de atividades
-
-**Planos Familiares**:
-- [ ] Compartilhamento de cofre familiar
-- [ ] Contas para crianças (restritas)
-- [ ] Melhorias no acesso de emergência
-- [ ] Controles de administração familiar
-
-**Empresarial**:
-- [ ] Integração SAML/SSO
-- [ ] Sincronização com Active Directory
-- [ ] Marca customizada
-- [ ] Relatórios avançados
-- [ ] Exportações de conformidade (SOC 2, ISO 27001)
+| # | Descrição | Severidade | Arquivo |
+|---|-----------|-----------|---------|
+| 1 | Coluna `srp_verifier` armazena hash bcrypt, não verificador SRP | Cosmético | `schema.sql` |
+| 2 | `wrapped_mek` é `gen_random_bytes(32)` aleatório no registro, não um key wrap real | Médio | `routes/index.ts` |
+| 3 | CORS default é `localhost:3001` (porta da API), deveria ser `localhost:5173` (web) | Médio | `config.ts` |
+| 4 | `fastify` e `prisma` estão nas deps do web app (deveriam ser só na API) | Cosmético | `apps/web/package.json` |
+| 5 | `zxcvbn` instalado mas não usado (o modal usa scorer customizado) | Cosmético | `apps/web/package.json` |
+| 6 | Prisma configurado mas schema vazio — projeto usa raw SQL | Cosmético | `prisma/schema.prisma` |
 
 ---
 
-## Versão 1.3.0 - T4 2026 (Recursos Avançados)
+## 📊 Progresso Geral
 
-### 🎯 Objetivos
-- Recursos baseados em IA
-- Segurança avançada
-- Aplicativos móveis
-
-### Recursos
-
-**Assistente de Segurança com IA**:
-- [ ] Sugestões inteligentes de senhas
-- [ ] Análise de risco
-- [ ] Detecção de anomalias
-- [ ] Recomendações de segurança
-- [ ] Previsão de vazamentos
-
-**Aplicativos Móveis**:
-- [ ] Aplicativo iOS (nativo)
-- [ ] Aplicativo Android (nativo)
-- [ ] Desbloqueio biométrico (Face ID, Touch ID)
-- [ ] Preenchimento automático móvel
-- [ ] Modo offline
-
-**Segurança Avançada**:
-- [ ] Suporte a chaves de hardware (YubiKey, FIDO2)
-- [ ] Login sem senha WebAuthn
-- [ ] Autenticação biométrica
-- [ ] Gerenciamento de dispositivos confiáveis
-- [ ] Restrições geográficas
-
-**Modo Viagem**:
-- [ ] Ocultar temporariamente itens sensíveis
-- [ ] Proteção para cruzamento de fronteiras
-- [ ] Habilitar/desabilitar com um clique
-- [ ] Restauração automática no retorno
+```
+Autenticação       ████████████████░░░░  80%  (falta refresh token, MFA, troca de senha)
+Cofre CRUD         ██████████████████░░  90%  (falta edição na UI, upload de arquivos)
+Criptografia       ████████████████████  100% (AES-256-GCM, Argon2id, key wrapping)
+Interface          ████████████████░░░░  80%  (falta edição, configurações, acessibilidade)
+Formulários        ██████████████░░░░░░  70%  (falta upload, melhorias em identidade/TOTP/API)
+Detecção Cartão    ████████████████████  100% (8 bandeiras, BINs abrangentes)
+Segurança          ██████████████░░░░░░  70%  (falta MFA, HIBP, painel de segurança)
+Infraestrutura     ██████████░░░░░░░░░░  50%  (falta Dockerfiles, CI/CD, testes)
+Mobile / Extensão  ░░░░░░░░░░░░░░░░░░░░  0%
+```
 
 ---
 
-## Versão 2.0.0 - 2027 (Privacidade & Descentralização)
-
-### 🎯 Objetivos
-- Opções de auto-hospedagem
-- Sincronização criptografada de ponta a ponta
-- Integração blockchain (opcional)
-
-### Recursos
-
-**Auto-hospedagem**:
-- [ ] Implantação com Docker Compose
-- [ ] Gráficos Helm para Kubernetes
-- [ ] Implantação na nuvem com um clique (DigitalOcean, AWS)
-- [ ] Atualizações automáticas
-- [ ] Automação de backup
-
-**Opções Descentralizadas**:
-- [ ] Sincronização ponto a ponto (opcional)
-- [ ] Integração IPFS para armazenamento de arquivos
-- [ ] Recuperação baseada em blockchain (opcional)
-- [ ] Sincronização multi-dispositivo sem servidor central
-
-**Herança Digital**:
-- [ ] Interruptor de homem morto
-- [ ] Executores confiáveis
-- [ ] Acesso com bloqueio temporal
-- [ ] Integração com documentação legal
-- [ ] Integração automatizada de testamento
-
-**Recursos Avançados**:
-- [ ] Gerador de alias de email
-- [ ] Cartões de crédito virtuais (integração)
-- [ ] Autenticação sem senha
-- [ ] Criptografia resistente a computação quântica (à prova de futuro)
-
----
-
-## Versão 2.1.0+ - 2027+ (Inovação)
-
-### Recursos Potenciais (Não Comprometidos)
-
-**Arquitetura de Confiança Zero**:
-- [ ] Políticas de acesso por item
-- [ ] Autenticação sensível ao contexto
-- [ ] Verificação contínua
-- [ ] Biometria comportamental
-
-**Privacidade Avançada**:
-- [ ] Integração Tor
-- [ ] Roteamento onion
-- [ ] Contas anônimas (pagamento em criptomoeda)
-- [ ] Minimização de metadados
-
-**Recursos para Desenvolvedores**:
-- [ ] Ferramenta CLI
-- [ ] API pública
-- [ ] SDK para aplicativos de terceiros
-- [ ] Webhooks
-- [ ] Provedor Terraform
-
-**Integrações**:
-- [ ] API de gerenciador de senhas (integração com navegador)
-- [ ] IFTTT/Zapier
-- [ ] Notificações Slack/Discord
-- [ ] Gerenciamento de segredos GitHub/GitLab
-- [ ] Integração com provedores de nuvem (AWS Secrets Manager)
-
-**IA & ML**:
-- [ ] Reconhecimento de padrões de senha
-- [ ] Detecção de phishing
-- [ ] Integração de inteligência de ameaças
-- [ ] Avisos de segurança preditivos
-- [ ] Busca no cofre em linguagem natural
-
----
-
-## Pesquisa & Exploração
-
-**Criptografia Pós-Quântica**:
-- CRYSTALS-Kyber (encapsulamento de chaves)
-- CRYSTALS-Dilithium (assinaturas)
-- SPHINCS+ (assinaturas sem estado)
-- Caminho de migração da criptografia atual
-
-**Criptografia Homomórfica**:
-- Operações no servidor em dados criptografados
-- Busca sem descriptografia
-- Computação sem acesso a chaves
-
-**Computação Multipartidária Segura**:
-- Segredos compartilhados sem confiança
-- Geração de chaves distribuída
-- Criptografia de limiar
-
-**Provas de Conhecimento Zero**:
-- Provar força de senha sem revelar senha
-- Verificação de identidade sem divulgação
-- Conformidade sem acesso a dados
-
----
-
-## Recursos da Comunidade
-
-**Código Aberto**:
-- [ ] Cliente código aberto (web, móvel, extensões)
-- [ ] Recompensas por auditoria de criptografia
-- [ ] Roteiro impulsionado pela comunidade
-- [ ] Desenvolvimento transparente
-
-**Programa de Recompensa por Bugs**:
-- Data de lançamento: T3 2026
-- Plataforma: HackerOne
-- Recompensas: $100 - $10.000+
-- Escopo: Todos os serviços ZeroGuard
-
-**Documentação**:
-- [ ] Tutoriais em vídeo
-- [ ] Demonstrações interativas
-- [ ] Whitepaper de segurança
-- [ ] Mergulho profundo em criptografia
-- [ ] Guias de implementação
-
----
-
-## Metas de Desempenho
-
-| Métrica | Atual | Meta (v2.0) |
-|---------|-------|-------------|
-| **Derivação de Chave** | ~300ms | ~200ms |
-| **Criptografia de Item** | ~5ms | ~3ms |
-| **Desbloqueio do Cofre** | ~500ms | ~300ms |
-| **Latência de Busca** | N/A | <100ms |
-| **Tempo de Sinc (1000 itens)** | N/A | <5s |
-| **Tempo de Carregamento** | ~1s | <500ms |
-
----
-
-## Metas de Segurança
-
-| Meta | Atual | Alvo |
-|------|-------|------|
-| **Pontuação de Segurança** | A | A+ |
-| **Recompensa por Bugs** | Não lançado | Ativo |
-| **Auditorias Externas** | 0 | Anual |
-| **Conformidade** | Nenhuma | SOC 2, ISO 27001 |
-| **Tempo de Atividade** | 99% | 99.9% |
-
----
-
-## Metas de Escalabilidade
-
-| Métrica | MVP | Ano 1 | Ano 3 | Ano 5 |
-|---------|-----|-------|-------|-------|
-| **Usuários** | 1K | 100K | 1M | 10M |
-| **Itens do Cofre** | 10K | 5M | 500M | 5B |
-| **Requisições API/dia** | 100K | 10M | 1B | 10B |
-| **Armazenamento** | 100GB | 10TB | 1PB | 10PB |
-| **Regiões** | 1 | 3 | 6 | 12 |
-
----
-
-## Parcerias de Pesquisa
-
-**Academia**:
-- Laboratório de Criptografia de Stanford
-- MIT CSAIL
-- CMU CyLab
-
-**Indústria**:
-- NIST (padrões de criptografia)
-- OWASP (segurança web)
-- Cloud Security Alliance
-
----
-
-## Questões Abertas
-
-1. **Devemos suportar apenas autenticação sem senha?**
-   - Pró: Elimina risco de senha mestra
-   - Contra: Requer chave de hardware, menos acessível
-
-2. **Auto-hospedagem vs Apenas nuvem?**
-   - Pró: Usuários conscientes da privacidade preferem auto-hospedagem
-   - Contra: Carga de suporte, riscos de segurança
-
-3. **Freemium vs Apenas pago?**
-   - Pró: Plano gratuito impulsiona adoção
-   - Contra: Abuso, custos de suporte
-
-4. **Blockchain para recuperação?**
-   - Pró: Descentralizado, resistente à censura
-   - Contra: Complexidade, experiência do usuário, taxas de gas
-
-5. **Tudo código aberto?**
-   - Pró: Transparência, confiança da comunidade
-   - Contra: Mais fácil para atacantes encontrarem vulnerabilidades
-
----
-
-## Canais de Feedback
-
-**Público**:
-- GitHub Issues: solicitações de recursos
-- Reddit: r/ZeroGuard
-- Twitter: @ZeroGuardApp
-- Discord: Comunidade ZeroGuard
-
-**Privado**:
-- Email: feedback@zeroguard.io
-- Segurança: security@zeroguard.io
-- Suporte: support@zeroguard.io
-
----
-
-## Contribuindo
-
-Recebemos contribuições! Veja [CONTRIBUTING.md](CONTRIBUTING.md).
-
-**Áreas Onde Precisamos de Ajuda**:
-- Auditorias de segurança
-- Documentação
-- Internacionalização (i18n)
-- Desenvolvimento de aplicativo móvel
-- Design de UI/UX
-- Otimização de desempenho
-
----
-
-**Versão do Roteiro**: 1.0  
-**Última Atualização**: 07/02/2026  
-**Próxima Revisão**: 01/05/2026
+**Versão do Roadmap:** 2.0  
+**Última atualização:** 07/02/2026

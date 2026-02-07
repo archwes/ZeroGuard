@@ -34,14 +34,14 @@ Use esta lista de verificação para acompanhar seu progresso na configuração 
   sudo systemctl status postgresql
   ```
 
-- [ ] Banco de dados `zeroguard_dev` criado
+- [ ] Banco de dados `zeroguard` criado
   ```bash
-  psql -U postgres -c "\l" | grep zeroguard_dev
+  psql -U postgres -c "\l" | grep zeroguard
   ```
 
 - [ ] Conexão testada com sucesso
   ```bash
-  psql -U postgres -d zeroguard_dev -c "SELECT version();"
+  psql -U postgres -d zeroguard -c "SELECT version();"
   ```
 
 ---
@@ -125,7 +125,7 @@ Use esta lista de verificação para acompanhar seu progresso na configuração 
 
 - [ ] Tabelas criadas (verificar no banco)
   ```bash
-  psql -U postgres -d zeroguard_dev -c "\dt"
+  psql -U postgres -d zeroguard -c "\dt"
   ```
 
 - [ ] (Opcional) Seed executado

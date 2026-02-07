@@ -175,7 +175,7 @@ export function analyzePasswordStrength(
     strength,
     score: result.score,
     entropy: Math.round(entropy),
-    crackTime: result.crack_times_display.offline_slow_hashing_1e4_per_second,
+    crackTime: String(result.crack_times_display.offline_slow_hashing_1e4_per_second),
     suggestions: result.feedback.suggestions,
     warning: result.feedback.warning,
     meetsRequirements,

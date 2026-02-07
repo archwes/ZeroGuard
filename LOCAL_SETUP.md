@@ -85,7 +85,7 @@ brew services start postgresql@15
 1. Abra pgAdmin
 2. Conecte ao servidor local
 3. Clique direito em "Databases" → "Create" → "Database"
-4. Nome: `zeroguard_dev`
+4. Nome: `zeroguard`
 5. Proprietário: `postgres`
 6. Salvar
 
@@ -95,11 +95,11 @@ brew services start postgresql@15
 psql -U postgres
 
 # Dentro do psql:
-CREATE DATABASE zeroguard_dev;
+CREATE DATABASE zeroguard;
 
 # Criar usuário específico (opcional)
 CREATE USER zeroguard_user WITH PASSWORD 'senha_segura_aqui';
-GRANT ALL PRIVILEGES ON DATABASE zeroguard_dev TO zeroguard_user;
+GRANT ALL PRIVILEGES ON DATABASE zeroguard TO zeroguard_user;
 
 # Sair
 \q
@@ -108,7 +108,7 @@ GRANT ALL PRIVILEGES ON DATABASE zeroguard_dev TO zeroguard_user;
 ### Passo 2: Testar Conexão
 ```bash
 # Testar conexão
-psql -U postgres -d zeroguard_dev -c "SELECT version();"
+psql -U postgres -d zeroguard -c "SELECT version();"
 ```
 
 Deve mostrar a versão do PostgreSQL.
@@ -161,7 +161,7 @@ PORT=4000
 HOST=0.0.0.0
 
 # Database (ajuste com suas configurações)
-DATABASE_URL="postgresql://postgres:SUA_SENHA@localhost:5432/zeroguard_dev"
+DATABASE_URL="postgresql://postgres:SUA_SENHA@localhost:5432/zeroguard"
 
 # JWT (pode deixar esses valores para desenvolvimento)
 JWT_SECRET="dev-secret-change-in-production"
@@ -185,7 +185,7 @@ LOG_LEVEL=debug
 
 **⚠️ IMPORTANTE:**
 - Substitua `SUA_SENHA` pela senha que você definiu no PostgreSQL
-- Se criou usuário específico, use: `postgresql://zeroguard_user:senha_segura_aqui@localhost:5432/zeroguard_dev`
+- Se criou usuário específico, use: `postgresql://zeroguard_user:senha_segura_aqui@localhost:5432/zeroguard`
 
 ### Interface (Web)
 
@@ -271,7 +271,7 @@ npm run prisma:seed
 ### Verificar Tabelas Criadas
 ```bash
 # Acessar database
-psql -U postgres -d zeroguard_dev
+psql -U postgres -d zeroguard
 
 # Listar tabelas
 \dt

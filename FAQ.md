@@ -43,10 +43,10 @@ Respostas rápidas para as dúvidas mais comuns sobre o ZeroGuard.
 
 ```bash
 # 1. Criar database
-psql -U postgres -c "CREATE DATABASE zeroguard_dev;"
+psql -U postgres -c "CREATE DATABASE zeroguard;"
 
 # 2. Configurar DATABASE_URL no .env
-DATABASE_URL="postgresql://postgres:senha@localhost:5432/zeroguard_dev"
+DATABASE_URL="postgresql://postgres:senha@localhost:5432/zeroguard"
 
 # 3. Executar migrations
 cd apps/api
@@ -61,7 +61,7 @@ npm run prisma:migrate:dev
 
 **Backend (apps/api/.env):**
 ```env
-DATABASE_URL="postgresql://postgres:senha@localhost:5432/zeroguard_dev"
+DATABASE_URL="postgresql://postgres:senha@localhost:5432/zeroguard"
 JWT_SECRET="dev-secret-change-in-production"
 CORS_ORIGIN="http://localhost:3000"
 ```

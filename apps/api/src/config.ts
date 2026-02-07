@@ -23,7 +23,7 @@ export const config = {
   // Redis (session store)
   redis: process.env.REDIS_URL
     ? {
-        url: process.env.REDIS URL,
+        url: process.env.REDIS_URL,
       }
     : null,
   
@@ -38,9 +38,8 @@ export const config = {
   },
   
   // CORS
-  allowedOrigins: process.env.ALLOWED_ORIGINS?.split(',') || [
-    'http://localhost:3000',
-    'http://localhost:5173', // Vite
+  allowedOrigins: process.env.ALLOWED_ORIGINS?.split(',') || process.env.CORS_ORIGIN?.split(',') || [
+    'http://localhost:3001',
   ],
   
   // File storage

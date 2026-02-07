@@ -20,13 +20,16 @@ import rateLimit from '@fastify/rate-limit';
 import jwt from '@fastify/jwt';
 import cookie from '@fastify/cookie';
 import multipart from '@fastify/multipart';
+import fastifyStatic from '@fastify/static';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
-import { config } from './config';
-import { db } from './db/client';
-import { registerRoutes } from './routes';
-import { errorHandler } from './middleware/errors';
-import { requestLogger } from './middleware/logging';
-import { securityHeaders } from './middleware/security';
+import { config } from './config.js';
+import { db } from './db/client.js';
+import { registerRoutes } from './routes/index.js';
+import { errorHandler } from './middleware/errors.js';
+import { requestLogger } from './middleware/logging.js';
+import { securityHeaders } from './middleware/security.js';
 
 /**
  * Create and configure Fastify server
@@ -57,19 +60,19 @@ export async function createServer() {
 
   // Helmet - Security headers
   await server.register(helmet, {
-    contentSecurityPolicy: {
+    contentSecurityPolicy: config.env === 'production' ? {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'"], // TODO: Remove unsafe-inline in production
-        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
         imgSrc: ["'self'", 'data:', 'https:'],
         connectSrc: ["'self'"],
-        fontSrc: ["'self'"],
+        fontSrc: ["'self'", 'https://fonts.gstatic.com'],
         objectSrc: ["'none'"],
         mediaSrc: ["'self'"],
         frameSrc: ["'none'"],
       },
-    },
+    } : false,
     hsts: {
       maxAge: 31536000, // 1 year
       includeSubDomains: true,
@@ -170,15 +173,43 @@ export async function createServer() {
   await registerRoutes(server);
 
   // ==========================================================================
-  // 404 HANDLER
+  // SERVE FRONTEND (production)
   // ==========================================================================
 
-  server.setNotFoundHandler((req, reply) => {
-    reply.code(404).send({
-      error: 'Not Found',
-      message: `Route ${req.method}:${req.url} not found`,
+  if (config.env === 'production') {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
+    const clientDistPath = join(__dirname, '..', '..', 'web', 'dist');
+
+    await server.register(fastifyStatic, {
+      root: clientDistPath,
+      prefix: '/',
+      wildcard: false,
     });
-  });
+
+    // SPA fallback — any non-API, non-file route serves index.html
+    server.setNotFoundHandler((req, reply) => {
+      if (req.url.startsWith('/auth/') || req.url.startsWith('/vault/') || req.url.startsWith('/health')) {
+        reply.code(404).send({
+          error: 'Not Found',
+          message: `Route ${req.method}:${req.url} not found`,
+        });
+      } else {
+        reply.sendFile('index.html');
+      }
+    });
+  } else {
+    // ==========================================================================
+    // 404 HANDLER (development)
+    // ==========================================================================
+
+    server.setNotFoundHandler((req, reply) => {
+      reply.code(404).send({
+        error: 'Not Found',
+        message: `Route ${req.method}:${req.url} not found`,
+      });
+    });
+  }
 
   return server;
 }
@@ -215,7 +246,5 @@ process.on('SIGTERM', async () => {
   process.exit(0);
 });
 
-// Start server if not being imported
-if (import.meta.url === `file://${process.argv[1]}`) {
-  start();
-}
+// Start server
+start();

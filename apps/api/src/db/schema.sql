@@ -1,5 +1,8 @@
+-- Forcar UTF-8 no cliente (resolve problema de encoding no Windows)
+SET client_encoding = 'UTF8';
+
 /**
- * 🔐 Database Schema - PostgreSQL
+ * Database Schema - PostgreSQL
  * 
  * Zero-knowledge architecture:
  * - Users table: Authentication only (SRP verifier, no passwords)
@@ -16,7 +19,6 @@
  */
 
 -- Enable required extensions
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- ============================================================================
@@ -24,10 +26,11 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- ============================================================================
 
 CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     
     -- Authentication (SRP-based, zero-knowledge)
     email_hash VARCHAR(64) UNIQUE NOT NULL,
+    display_name VARCHAR(255),
     salt BYTEA NOT NULL,
     srp_verifier TEXT NOT NULL,
     wrapped_mek BYTEA NOT NULL,
@@ -63,7 +66,7 @@ CREATE INDEX idx_users_created_at ON users(created_at);
 -- ============================================================================
 
 CREATE TABLE vault_items (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     
     -- Item type
@@ -99,7 +102,7 @@ CREATE INDEX idx_vault_items_created ON vault_items(created_at);
 -- ============================================================================
 
 CREATE TABLE sessions (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     
     -- Session tokens
@@ -150,7 +153,7 @@ CREATE TABLE audit_log (
     CONSTRAINT valid_action CHECK (
         action IN (
             'login', 'logout', 'register', 'password_change',
-            'create_item', 'read_item', 'update_item', 'delete_item',
+            'list_items', 'create_item', 'read_item', 'update_item', 'delete_item',
             'export_vault', 'import_vault',
             'mfa_enable', 'mfa_disable', 'mfa_verify',
             'session_create', 'session_revoke'
@@ -167,7 +170,7 @@ CREATE INDEX idx_audit_timestamp ON audit_log(timestamp DESC);
 -- ============================================================================
 
 CREATE TABLE files (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     vault_item_id UUID REFERENCES vault_items(id) ON DELETE CASCADE,
     
@@ -193,7 +196,7 @@ CREATE INDEX idx_files_storage_key ON files(storage_key);
 -- ============================================================================
 
 CREATE TABLE emergency_contacts (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     
     -- Contact info (hashed for privacy)
@@ -228,7 +231,7 @@ CREATE INDEX idx_emergency_status ON emergency_contacts(status) WHERE status = '
 -- ============================================================================
 
 CREATE TABLE shared_items (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     item_id UUID NOT NULL REFERENCES vault_items(id) ON DELETE CASCADE,
     owner_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     shared_with_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,

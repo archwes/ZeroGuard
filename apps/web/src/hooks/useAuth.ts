@@ -1,5 +1,8 @@
+/// <reference types="vite/client" />
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 interface User {
   id: string;
@@ -9,88 +12,78 @@ interface User {
 
 interface AuthState {
   user: User | null;
+  token: string | null;
   isAuthenticated: boolean;
+  masterPassword: string | null; // kept in memory only (not persisted)
+  salt: string | null; // base64-encoded salt from server (persisted)
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
-// Mock de "banco de dados" local para desenvolvimento
-const USERS_STORAGE_KEY = 'zeroguard-users';
-
-const getUsers = (): Array<{ email: string; password: string; name: string; id: string }> => {
-  const stored = localStorage.getItem(USERS_STORAGE_KEY);
-  return stored ? JSON.parse(stored) : [];
-};
-
-const saveUser = (user: { email: string; password: string; name: string; id: string }) => {
-  const users = getUsers();
-  users.push(user);
-  localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-};
-
-const findUser = (email: string, password: string) => {
-  const users = getUsers();
-  return users.find(u => u.email === email && u.password === password);
-};
-
 export const useAuth = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
+      token: null,
       isAuthenticated: false,
+      masterPassword: null,
+      salt: null,
 
       register: async (name: string, email: string, password: string) => {
-        // Simula delay de rede
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        const res = await fetch(`${API_URL}/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password }),
+        });
 
-        // Verifica se email já existe
-        const users = getUsers();
-        const existingUser = users.find(u => u.email === email);
-        
-        if (existingUser) {
-          throw new Error('E-mail já cadastrado');
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.message || 'Erro ao criar conta');
         }
-
-        // Cria novo usuário
-        const newUser = {
-          id: crypto.randomUUID(),
-          name,
-          email,
-          password, // ⚠️ ATENÇÃO: Em produção, NUNCA armazenar senha em plain text!
-        };
-
-        saveUser(newUser);
-
-        // Não faz login automático - usuário precisa fazer login
       },
 
       login: async (email: string, password: string) => {
-        // Simula delay de rede
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        const res = await fetch(`${API_URL}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
 
-        const user = findUser(email, password);
+        const data = await res.json();
 
-        if (!user) {
-          throw new Error('E-mail ou senha incorretos');
+        if (!res.ok) {
+          throw new Error(data.message || 'Erro ao fazer login');
         }
 
-        // Autenticação bem-sucedida
-        set({ 
-          user: { id: user.id, name: user.name, email: user.email },
-          isAuthenticated: true 
+        set({
+          user: data.user,
+          token: data.token,
+          isAuthenticated: true,
+          masterPassword: password, // kept in memory for MEK derivation
+          salt: data.salt, // base64 salt from server
         });
       },
 
       logout: () => {
-        set({ user: null, isAuthenticated: false });
+        set({
+          user: null,
+          token: null,
+          isAuthenticated: false,
+          masterPassword: null,
+          salt: null,
+        });
       },
     }),
     {
       name: 'auth-storage',
       partialize: (state) => ({
         user: state.user,
+        token: state.token,
         isAuthenticated: state.isAuthenticated,
+        salt: state.salt,
+        // masterPassword is NOT persisted — memory only
       }),
     }
   )

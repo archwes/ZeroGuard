@@ -48,11 +48,45 @@ export default function LoginPage() {
 
     try {
       await login(email, masterPassword);
-      toast.success('Login realizado com sucesso!');
+      toast.success('Login realizado com sucesso! Bem-vindo de volta.', {
+        icon: '🔓',
+        duration: 3000,
+      });
       navigate('/dashboard');
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erro ao fazer login';
-      toast.error(errorMessage);
+
+      // Mensagens personalizadas baseadas no erro
+      if (errorMessage.includes('Nenhuma conta encontrada')) {
+        toast.error('Nenhuma conta encontrada com essas credenciais.', {
+          icon: '🔍',
+          duration: 5000,
+          style: {
+            borderLeft: '4px solid #ef4444',
+          },
+        });
+      } else if (errorMessage.includes('bloqueada')) {
+        toast.error(errorMessage, {
+          icon: '🔒',
+          duration: 8000,
+          style: {
+            borderLeft: '4px solid #f59e0b',
+          },
+        });
+      } else if (errorMessage.includes('incorretos') || errorMessage.includes('Restam')) {
+        toast.error(errorMessage, {
+          icon: '❌',
+          duration: 5000,
+          style: {
+            borderLeft: '4px solid #ef4444',
+          },
+        });
+      } else {
+        toast.error(errorMessage, {
+          icon: '⚠️',
+          duration: 4000,
+        });
+      }
     } finally {
       setLoading(false);
     }

@@ -184,10 +184,10 @@ cp apps/api/.env.example apps/api/.env
 cp apps/web/.env.example apps/web/.env
 
 # 3. Configurar DATABASE_URL em apps/api/.env
-# Editar: postgresql://postgres:senha@localhost:5432/zeroguard_dev
+# Editar: postgresql://postgres:senha@localhost:5432/zeroguard
 
 # 4. Criar database
-psql -U postgres -c "CREATE DATABASE zeroguard_dev;"
+psql -U postgres -c "CREATE DATABASE zeroguard;"
 
 # 5. Executar migrações
 cd apps/api && npm run prisma:migrate:dev
