@@ -37,7 +37,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.onrender.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://zeroguard.onrender.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
         }
       ]
     },
@@ -52,7 +52,7 @@
     }
   ],
   "env": {
-    "VITE_API_URL": "@vite_api_url",
+    "VITE_API_URL": "https://zeroguard.onrender.com",
     "VITE_APP_NAME": "ZeroGuard",
     "VITE_APP_VERSION": "1.0.0"
   }

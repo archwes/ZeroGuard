@@ -63,6 +63,10 @@ export const config = {
     timeCost: 3,
     parallelism: 4,
   },
+
+  security: {
+    enableHsts: process.env.ENABLE_HSTS === 'true',
+  },
   
   // Email (for future notifications)
   email: {

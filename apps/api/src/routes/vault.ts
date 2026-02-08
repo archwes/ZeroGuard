@@ -24,15 +24,23 @@ const EncryptedVaultItemSchema = z.object({
   encryptedMetadata: z.string().optional(),
 });
 
-/**
- * Request type extensions
- */
-interface AuthenticatedRequest extends FastifyRequest {
-  user: {
-    id: string;
-    emailHash: string;
-  };
-}
+type VaultItemRow = {
+  id: string;
+  itemType: string;
+  encryptedData: Buffer;
+  encryptedKey: Buffer;
+  nonce: Buffer;
+  authTag: Buffer;
+  encryptedMetadata: Buffer | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type IdRow = { id: string };
+type StorageLimitRow = { storage_limit: number | string | null };
+type StorageUsedRow = { used: number | string | null };
+type CountRow = { item_type: string; count: string };
+type StorageRow = { storage_used: number | string | null; storage_limit: number | string | null };
 
 /**
  * Register vault routes
@@ -47,12 +55,12 @@ export async function vaultRoutes(server: FastifyInstance) {
     {
       onRequest: [server.authenticate], // JWT middleware
     },
-    async (request: AuthenticatedRequest, reply: FastifyReply) => {
+    async (request: FastifyRequest, reply: FastifyReply) => {
       try {
         const { id: userId } = request.user;
 
         // Fetch all non-deleted items for user
-        const items = await server.db.query(
+        const items = await server.db.query<VaultItemRow>(
           `SELECT 
             id, item_type as "itemType", 
             encrypted_data as "encryptedData",
@@ -116,12 +124,12 @@ export async function vaultRoutes(server: FastifyInstance) {
         },
       },
     },
-    async (request: AuthenticatedRequest, reply: FastifyReply) => {
+    async (request: FastifyRequest, reply: FastifyReply) => {
       try {
         const { id } = request.params as { id: string };
         const { id: userId } = request.user;
 
-        const result = await server.db.query(
+        const result = await server.db.query<VaultItemRow>(
           `SELECT 
             id, item_type as "itemType",
             encrypted_data as "encryptedData",
@@ -181,7 +189,7 @@ export async function vaultRoutes(server: FastifyInstance) {
     {
       onRequest: [server.authenticate],
     },
-    async (request: AuthenticatedRequest, reply: FastifyReply) => {
+    async (request: FastifyRequest, reply: FastifyReply) => {
       try {
         const { id: userId } = request.user;
         const body = EncryptedVaultItemSchema.parse(request.body);
@@ -201,13 +209,13 @@ export async function vaultRoutes(server: FastifyInstance) {
         const itemSize = encryptedData.length + encryptedKey.length;
 
         // Check storage quota
-        const limitResult = await server.db.query(
+        const limitResult = await server.db.query<StorageLimitRow>(
           `SELECT storage_limit FROM users WHERE id = $1`,
           [userId]
         );
         const storageLimit = Number(limitResult.rows[0]?.storage_limit ?? 1073741824);
 
-        const usedResult = await server.db.query(
+        const usedResult = await server.db.query<StorageUsedRow>(
           `SELECT COALESCE(SUM(octet_length(encrypted_data) + octet_length(encrypted_key)), 0) AS used
            FROM vault_items WHERE user_id = $1 AND deleted_at IS NULL`,
           [userId]
@@ -281,14 +289,14 @@ export async function vaultRoutes(server: FastifyInstance) {
         },
       },
     },
-    async (request: AuthenticatedRequest, reply: FastifyReply) => {
+    async (request: FastifyRequest, reply: FastifyReply) => {
       try {
         const { id } = request.params as { id: string };
         const { id: userId } = request.user;
         const body = request.body as z.infer<typeof EncryptedVaultItemSchema>;
 
         // Verify ownership
-        const existing = await server.db.query(
+        const existing = await server.db.query<IdRow>(
           `SELECT id FROM vault_items WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL`,
           [id, userId]
         );
@@ -362,13 +370,13 @@ export async function vaultRoutes(server: FastifyInstance) {
         },
       },
     },
-    async (request: AuthenticatedRequest, reply: FastifyReply) => {
+    async (request: FastifyRequest, reply: FastifyReply) => {
       try {
         const { id } = request.params as { id: string };
         const { id: userId } = request.user;
 
         // Soft delete
-        const result = await server.db.query(
+        const result = await server.db.query<IdRow>(
           `UPDATE vault_items SET deleted_at = NOW() 
           WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL
           RETURNING id`,
@@ -411,12 +419,12 @@ export async function vaultRoutes(server: FastifyInstance) {
     {
       onRequest: [server.authenticate],
     },
-    async (request: AuthenticatedRequest, reply: FastifyReply) => {
+    async (request: FastifyRequest, reply: FastifyReply) => {
       try {
         const { id: userId } = request.user;
 
         // Get item counts by type
-        const counts = await server.db.query(
+        const counts = await server.db.query<CountRow>(
           `SELECT item_type, COUNT(*) as count
           FROM vault_items
           WHERE user_id = $1 AND deleted_at IS NULL
@@ -425,7 +433,7 @@ export async function vaultRoutes(server: FastifyInstance) {
         );
 
         // Get storage usage
-        const storage = await server.db.query(
+        const storage = await server.db.query<StorageRow>(
           `SELECT storage_used, storage_limit FROM users WHERE id = $1`,
           [userId]
         );
@@ -434,6 +442,9 @@ export async function vaultRoutes(server: FastifyInstance) {
         counts.rows.forEach(row => {
           countMap[row.item_type] = parseInt(row.count, 10);
         });
+
+        const storageUsed = Number(storage.rows[0]?.storage_used ?? 0);
+        const storageLimit = Number(storage.rows[0]?.storage_limit ?? 0);
 
         return {
           totalItems: counts.rows.reduce((sum, row) => sum + parseInt(row.count, 10), 0),
@@ -445,8 +456,8 @@ export async function vaultRoutes(server: FastifyInstance) {
           totpCount: countMap.totp || 0,
           apiKeyCount: countMap.api_key || 0,
           licenseCount: countMap.license || 0,
-          storageUsed: storage.rows[0].storage_used,
-          storageLimit: storage.rows[0].storage_limit,
+          storageUsed,
+          storageLimit,
         };
       } catch (error) {
         server.log.error(error, 'Failed to fetch vault stats');

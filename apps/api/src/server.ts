@@ -61,6 +61,7 @@ export async function createServer() {
   // Helmet - Security headers
   await server.register(helmet, {
     contentSecurityPolicy: config.env === 'production' ? {
+      useDefaults: false,
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "'unsafe-inline'"],
@@ -73,11 +74,11 @@ export async function createServer() {
         frameSrc: ["'none'"],
       },
     } : false,
-    hsts: {
+    hsts: config.security.enableHsts ? {
       maxAge: 31536000, // 1 year
       includeSubDomains: true,
       preload: true,
-    },
+    } : false,
   });
 
   // CORS

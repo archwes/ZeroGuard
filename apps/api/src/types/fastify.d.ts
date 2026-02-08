@@ -29,3 +29,18 @@ declare module 'fastify' {
     authenticate: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
   }
 }
+
+declare module '@fastify/jwt' {
+  interface FastifyJWT {
+    payload: {
+      id: string;
+      emailHash?: string;
+      type?: string;
+    };
+    user: {
+      id: string;
+      emailHash?: string;
+      type?: string;
+    };
+  }
+}

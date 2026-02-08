@@ -77,3 +77,4 @@ netlify.toml.local
 scripts/secrets.txt
 .turbo/
 .vercel/
+.vercel
